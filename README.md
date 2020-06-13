@@ -1,3 +1,8 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+---
 # Curso completo de análisis de datos con R: de cero a experto con JB
 Apúntate al curso completo desde aquí mismo - https://www.udemy.com/r-data-science/?couponCode=GIT_JB
 
