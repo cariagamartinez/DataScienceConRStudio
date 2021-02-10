@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>NotesScaleFactor</key>
+	<real>1.75</real>
+	<key>binderSplitFrames</key>
+	<array>
+		<string>{{0, 0}, {265, 796}}</string>
+		<string>{{266, 0}, {874, 796}}</string>
+	</array>
+	<key>inspectorSplitFrames</key>
+	<array>
+		<string>{{0, 0}, {512, 640}}</string>
+	</array>
+	<key>inspectorWidth</key>
+	<real>245</real>
+	<key>mainDocumentEditor.scrollRect</key>
+	<string>{{0, 0}, {606, 294}}</string>
+	<key>mainWindowFrame</key>
+	<string>0 591 1140 824 0 0 2560 1415 </string>
+	<key>supportingDocumentEditor.scrollRect</key>
+	<string>{{0, 0}, {606, 294}}</string>
+	<key>supportingDocumentViewIsCurrent</key>
+	<false/>
+</dict>
+</plist>
