@@ -1,0 +1,84 @@
+---
+title: "Lectura y opciones de CSV"
+output: html_notebook
+---
+## Abriendo un CSV
+\
+
+* Vamos a abrir un .csv y lo vamos a asignar a una variable. 
+En este caso, la variable se llamará _"auto"_. Para hacer la lectura usaremos la función _read.csv_ seguido de comillas dobles.
+* Entre dichas comillas escribiremos la ruta dónde se encuentra el archivo a leer. 
+* Como no suele sencillo escribir esa ruta, basta con que usemos el tabulador para ir autocompletando. 
+* En general, la ruta "arranca" en el directorio que hayamos establecido como directorio de trabajo (_working directory_).
+* También es posible utilizar la grafía ".." (punto punto) que indica que se debe subir un nivel en el árbol de archivos.
+\
+\
+
+Por ahora veamos cómo leer un archivo y guardarlo en una variable que, en este caso, se llama _"auto"_:
+
+```{r Guardar CSV en variable}
+auto <- read.csv ("/Users/macbookariel/Library/Mobile Documents/com~apple~CloudDocs/@ARIEL/AADD/DataScience/DataScience-con-RStudio/@Ariel/b Datos/tema1/auto-mpg.csv")
+```
+\
+Como resultado de la operación anterior, se habrá creado la variable _auto_ que se podrá ver en la pestaña _**Global Environment**_.
+\
+\
+
+### Opciones de _**read.csv**_
+
+La función _**read.csv**_ tiene varias opciones, siendo obligatoria la localización del archivo. 
+
+Podríamos utilizar la opción __*header = T/F*__ que indicaría la presencia o ausencia de cabecera (es decir, si la primera fila es un dato o una descripción de las observaciones). Cuando abrimos un archivo que no contiene cabecera, por defecto R (RStudio) generará unos nombres de variable como "V1, V2...".
+
+En algunos casos puede ser útil usar la función _**head**_, que nos devolverá las primeras filas del archivo leído y verificar qué se ha cargado
+
+```{r}
+head(auto)
+```
+\
+
+Otro parámetro adicional es _**col.names**_ que nos permitirá definir específicamente el nombre de las columnas ("cabeceras personalizadas"), que ingresaremos en un vector (c) y entrecomilladas.
+
+```{r Opciones de lectura de CSV}
+auto_custom_header <- read.csv("/Users/macbookariel/Library/Mobile Documents/com~apple~CloudDocs/@ARIEL/AADD/DataScience/DataScience-con-RStudio/@Ariel/b Datos/tema1/auto-mpg.csv", 
+                               header = F, 
+                               col.names = c("número", "millas-galón", "cilindrada", "desplazamiento", "caballos-potencia", "peso", "aceleración", "año", "modelo"))
+```
+\
+
+Veamos cómo han quedado las dos primeras filas (parámetro _**head**_):
+
+```{r Cabecera personalizada}
+head(auto_custom_header, 2)
+```
+\
+
+Otra opción interesante al leer un CSV tiene que ver con cómo designa los valores no disponibles ($NA$). 
+
+Es posible:
+
+1. Indicar cómo queremos que sean rellenadas las observaciones que faltan o bien,
+2. Indicar cómo están codificados los valores no disponibles en el documento leído.
+\
+
+En general, los valores $NA$ aparecen con el string NA, pero es posible que algún CSV contenga otro string para significar valores no disponibles (por ejemplo: N/A, null, na, etc.). En ese caso se puede indicar, al abrir el CSV, cómo vamos a llamar a los NAs. Para ello haremos uso de la función _**string.na = "grafía correspondiente"**_ o bien _**string.na = ""**_ (string vacío).
+\
+
+Otra opción que debemos tener en cuenta al abrir un archivo, es que R suele considerar los _strings_ como si fueran factores (variables categóricas). Para evitar esta conversión directa, y usar los _strings_ como _strings_ podemos agregar la opción _**stringAsFactors = FALSE**_
+
+Finalmente, se podrían cargar los datos a partir de una ruta web. Por ejemplo:
+
+```{r Carga desde WEB}
+auto_web <- read.csv("https://frogames.es/course-contents/r/intro/tema1/WHO.csv")
+```
+
+* Veamos si la carga desde la web ha ido bien con el comando _**head**_:
+
+```{r}
+head(auto_web, 10)
+```
+\
+
+Además, este CSV de la web del curso también contiene valores de NA, etc., para realizar prácticas al respecto de la carga de CSVs.
+\
+\

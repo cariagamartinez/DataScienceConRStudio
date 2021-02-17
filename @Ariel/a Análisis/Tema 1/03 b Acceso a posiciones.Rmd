@@ -1,0 +1,35 @@
+---
+title: "03-b-Acceso a posiciones"
+author: "Ariel Cariaga Martínez"
+date: "2/13/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## ESTA LECCIÓN ESTÁ UNIDA A LA ANTERIOR POR LO QUE NO SE TEJERÁ YA QUE LE FALTAN LAS VARIABLES.
+
+
+### Accediendo con la sintaxis del dólar
+
+Cuando tenemos listas dentro de listas, también podemos acceder a las posiciones/listas de interés (en lugar de usar dobles corchetes) con el símbolo del dólar y el tabulador. Es tan simple como indicar la tabla inicial, agregar un _$_ e ir completando con el tabulador y símbolo según el grado de anidamiento que tenga la tabla, hasta llegar al punto de interés. Así podríamos acceder a una posición específica y guardarlo en una variable para que se transforme en un dataframe.
+
+```{r}
+currencies$eur -> currency.data
+data.frame (currency.data) -> table1
+```
+
+En la sentencia anterior hemos indicado que los valores guardados en la tabla _currencies/eur_, se guardaran provisionalmente en una variable (_currency.data_) y posteriormente transformamos la variable currency.data a un dataframe y lo guardamos en la variable _table1_.
+
+
+Otra posibilidad de acceso, además de la sintaxis del dólar, son los corchetes. En ese caso, se pueden seleccionar X filas e Y columnas entre corchetes. 
+
+Si queremos seleccionar determinadas filas y todas las columnas, la sintaxis sería: **nombre_tabla[X-filas, Y-columnas]**
+
+Por ejemplo:**nombre_tabla[2:5,]**. En este caso se seleccionarían las filas 2 a la 5 y todas la columnas. NOTAR LA COMA AL FINAL DEL RANGO DE FILAS.
+
+Sucede lo mismo si queremos seleccionar solo las columnas.
+
+En el caso de que solo deseemos determinadas filas/columnas, accederemos con la sintaxis _c_. Por ejemplo: **nombre_tabla[c(2,5,8),]** nos seleccionaría las filas 2, 5 y 8 y todas la columnas.

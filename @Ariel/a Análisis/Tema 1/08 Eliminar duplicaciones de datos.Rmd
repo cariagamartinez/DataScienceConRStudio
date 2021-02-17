@@ -1,0 +1,50 @@
+---
+title: "Eliminar duplicidades"
+output: html_notebook
+---
+\
+
+Generemos un dataframe con los siguientes datos:
+
+```{r}
+family.salary <- c(40000, 60000, 50000, 80000, 60000, 70000, 60000)
+family.size <- c(4, 3, 2, 2, 3, 4, 3)
+family.car <- c("Lujo", "Compacto", "Utilitario", "Lujo", "Compacto", "Compacto", "Compacto")
+family <- data.frame(family.salary, family.size, family.car)
+```
+\
+Utilizando la función _**unique**_ podemos obtener los datos únicos, es decir, sin duplicidades. Siempre devuelve un objeto **DEL MISMO TIPO**.
+
+```{r}
+unique(family) -> family.unique
+```
+\
+En otros casos, solo interesa saber cuáles son los datos
+duplicados. Para ello vamos a usar la función _**duplicated**_, **que nos devolverá un vector booleano**.
+
+```{r}
+duplicated(family)-> family.duplicated
+View (family.duplicated)
+```
+\
+Si quisiéramos obtener los duplicados, podríamos utilizar la sintaxis de corchetes:
+\
+```{r}
+family [duplicated(family),] -> family.duplicated.2
+View (family.duplicated.2)
+```
+\
+Así, obtendríamos **SOLAMENTE LOS VALORES DUPLICADOS**.
+\
+\
+
+
+
+
+
+
+
+
+
+
+

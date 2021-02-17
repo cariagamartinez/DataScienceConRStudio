@@ -1,0 +1,68 @@
+---
+title: "Lectura y análisis de ficheros JSON"
+output: html_notebook
+---
+
+### Leyendo ficheros en formato JSON (_JavaScript Object Notation_)
+\
+
+Es un tipo de formato de fichero que muchas veces contiene más información y de un modo más "económico" que los HTML y los CSV. Para trabajar con este formato vamos a usar el paquete _**jsonlite**_ que tendremos que instalar (_**install.package("jsonlite")**_) y luego cargar (_**library(jsonlite)**_).
+
+```{r}
+library(jsonlite)
+```
+\
+
+Como siempre, vamos a cargar los datos del fichero (JSON) a una variable, usando _**fromJSON**_ del paquete _**jsonlite**_.
+
+```{r}
+dat.1 <- fromJSON("/Users/macbookariel/Library/Mobile Documents/com~apple~CloudDocs/@ARIEL/AADD/DataScience/DataScience-con-RStudio/@Ariel/b Datos/tema1/students.json")
+
+dat.2 <- fromJSON("/Users/macbookariel/Library/Mobile Documents/com~apple~CloudDocs/@ARIEL/AADD/DataScience/DataScience-con-RStudio/@Ariel/b Datos/tema1/student-courses.json")
+```
+\
+
+Internamente un JSON tiene una estructura de árbol (muy similar al XML), aunque varía un poco la sintaxis (muy breve) y el uso de etiquetas. Es básicamente una colección (o array) de campos-valores.
+
+### Leyendo un json desde internet
+\
+
+Existen muchos ficheros en la web que usan JSON en tiempo real y podríamos leerlo directamente. Antes, vamos a instalar y cargar el paquete _**curl**_.
+
+```{r}
+library(curl)
+url <- "http://www.floatrates.com/daily/usd.json"
+currencies <- fromJSON(url)
+```
+
+### Accediendo con la sintaxis del dólar
+
+Cuando tenemos listas dentro de listas, también podemos acceder a las posiciones/listas de interés (en lugar de usar dobles corchetes) con el símbolo del dólar y el tabulador. Es tan simple como indicar la tabla inicial, agregar un _$_ e ir completando con el tabulador y símbolo según el grado de anidamiento que tenga la tabla, hasta llegar al punto de interés. Así podríamos acceder a una posición específica y guardarlo en una variable para que se transforme en un dataframe.
+
+```{r}
+currencies$eur -> currency.data
+data.frame (currency.data) -> table1
+```
+\
+
+En la sentencia anterior hemos indicado que los valores guardados en la tabla _currencies/eur_, se guardaran provisionalmente en una variable (_currency.data_) y posteriormente transformamos la variable _currency.data_ a un dataframe y lo guardamos en la variable _table1_.
+
+
+Otra posibilidad de acceso, además de la sintaxis del dólar, son los corchetes. En ese caso, se pueden seleccionar X filas e Y columnas entre corchetes. 
+
+Si queremos seleccionar determinadas filas y todas las columnas, la sintaxis sería: **nombre_tabla[X-filas, Y-columnas]**
+
+Por ejemplo: **nombre_tabla[2:5,]**. En este caso se seleccionarían las filas 2 a la 5 y todas la columnas. NOTAR LA COMA AL FINAL DEL RANGO DE FILAS.
+
+Sucede lo mismo si queremos seleccionar solo las columnas.
+
+En el caso de que solo deseemos determinadas filas/columnas, accederemos con la sintaxis $c$. 
+Por ejemplo: **nombre_tabla[c(2,5,8),]** nos seleccionaría las filas 2, 5 y 8 y todas la columnas.
+
+\
+
+#### Crear un JSON desde un _dataframe_
+
+Para ello, utilizamos la función _**toJSON**_ del paquete _**jsonlite**_.
+\
+\
