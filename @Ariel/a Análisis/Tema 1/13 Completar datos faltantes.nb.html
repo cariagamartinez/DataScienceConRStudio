@@ -11,7 +11,7 @@
 
 
 
-<title>Trabajo con datos faltantes</title>
+<title>Opciones para completar datos</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -1766,194 +1766,102 @@ summary {
 
 
 
-<h1 class="title toc-ignore">Trabajo con datos faltantes</h1>
+<h1 class="title toc-ignore">Opciones para completar datos</h1>
 
 </div>
 
 
 <!-- rnb-text-begin -->
-<div id="cómo-trabajar-con-datos-faltantes-missing-data" class="section level3">
-<h3>¿Cómo trabajar con datos faltantes (Missing Data)?</h3>
 <p><br />
 </p>
-<p>Para trabajar con datos faltantes, vamos a usar un CSV en el cual faltan algunas observaciones (<em>missing-data.csv</em>).</p>
-<ul>
-<li>Como siempre, vamos a guardar el CSV en una variable para no tener que acceder constantemente con toda la ruta.</li>
-<li>Si no indicamos nada, los espacios vacíos se leerán como <span class="math inline">\(NAs\)</span>.</li>
-<li>Pero para evitar ambigüedades, vamos a indicarlo específicamente con al argumento <em><strong>na.strings = &quot;&quot;</strong></em>.</li>
-</ul>
+<p>En el notebook 6 habíamos realizado una primera aproximación. Veamos ahora un poco más en profundidad acerca de cómo trabajar con datos faltantes. Para ello, vamos a cargar el dataset de trabajo y a guardarlo en una variable. Vamos a especificar que el dataset tiene cabecera y además, vamos a indicar que no identifique los strings como factores, ya que el dataset tiene valores NA que podrían interpretarse como valores discretos.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuZGF0YSA8LSByZWFkLmNzdihcXC9Vc2Vycy9tYWNib29rYXJpZWwvTGlicmFyeS9Nb2JpbGUgRG9jdW1lbnRzL2NvbX5hcHBsZX5DbG91ZERvY3MvQEFSSUVML0FBREQvRGF0YVNjaWVuY2UvRGF0YVNjaWVuY2UtY29uLVJTdHVkaW8vQEFyaWVsL2IgRGF0b3MvdGVtYTEvbWlzc2luZy1kYXRhLmNzdlxcLCBuYS5zdHJpbmdzID0gXFxcXClcbmBgYFxuYGBgIn0= -->
-<pre class="r"><code>```r
-data &lt;- read.csv(\/Users/macbookariel/Library/Mobile Documents/com~apple~CloudDocs/@ARIEL/AADD/DataScience/DataScience-con-RStudio/@Ariel/b Datos/tema1/missing-data.csv\, na.strings = \\)</code></pre>
-<pre><code>
-&lt;!-- rnb-source-end --&gt;
-
-&lt;!-- rnb-chunk-end --&gt;
-
-
-&lt;!-- rnb-text-begin --&gt;
-
-\
-
-El siguiente paso sería limpiar el dataframe, es decir, ver qué opciones tenemos para trabajar con los datos no disponibles ($NA$). Tenemos varias opciones.
-\
-\
-
-#### a) Omitir los $NA$
-
-
-&lt;!-- rnb-text-end --&gt;
-
-
-&lt;!-- rnb-chunk-begin --&gt;
-
-
-&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuZGF0YS5jbGVhbmVkIDwtIG5hLm9taXQoZGF0YSlcbmBgYFxuYGBgIn0= --&gt;
-
-```r
-```r
-data.cleaned &lt;- na.omit(data)</code></pre>
-<pre><code>
-&lt;!-- rnb-source-end --&gt;
-
-&lt;!-- rnb-chunk-end --&gt;
-
-
-&lt;!-- rnb-text-begin --&gt;
-
-\
-
-Con esta sintaxis hemos transformado a ceros, todos los $NAs$. Sin embargo, es posible que otras veces querramos otras versiones no tan destructivas.
-\
-\
-
-#### b) Limpieza de $NA$ de variables seleccionadas.
-\
-
-Por ejemplo, con una limpieza selectiva por columnas. En el siguiente ejemplo haríamos una extracción selectiva de todos las filas donde no hay $NAs$ dentro de la columna &quot;Income&quot; y nos quedaríamos con todas las columnas. Toda esta extracción la guardamos en una nueva variable que se llamará data.income.cleaned (**COMPARAR ESTA VARIABLE CON LA PROPIA DATA QUE ES LA ORIGINAL**).
-
-
-&lt;!-- rnb-text-end --&gt;
-
-
-&lt;!-- rnb-chunk-begin --&gt;
-
-
-&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuI0xpbXBpYXIgTkFzIHNvbGFtZW50ZSBkZSBsYSB2YXJpYWJsZSBJTkNPTUVcbmRhdGEuaW5jb21lLmNsZWFuZWQgPC0gZGF0YVshaXMubmEoZGF0YSRJbmNvbWUpLF1cbmBgYFxuYGBgIn0= --&gt;
-
-```r
-```r
-#Limpiar NAs solamente de la variable INCOME
-data.income.cleaned &lt;- data[!is.na(data$Income),]</code></pre>
-<pre><code>
-&lt;!-- rnb-source-end --&gt;
-
-&lt;!-- rnb-chunk-end --&gt;
-
-
-&lt;!-- rnb-text-begin --&gt;
-
-\
-
-Otra operación para obtener el mismo resultado que utilizando _**na.omit**_ es usar la sintaxis _**complete.cases**_. Esta función devuelve un array de datos booleanos y podríamos hacer una extracción selectiva quedándonos con todas la filas que estén completas y con todas las columnas:
-
-
-&lt;!-- rnb-text-end --&gt;
-
-
-&lt;!-- rnb-chunk-begin --&gt;
-
-
-&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuZGF0YS5jbGVhbmVkLjIgPC0gZGF0YVtjb21wbGV0ZS5jYXNlcyhkYXRhKSxdXG5gYGBcbmBgYCJ9 --&gt;
-
-```r
-```r
-data.cleaned.2 &lt;- data[complete.cases(data),]</code></pre>
-<pre><code>
-&lt;!-- rnb-source-end --&gt;
-
-&lt;!-- rnb-chunk-end --&gt;
-
-
-&lt;!-- rnb-text-begin --&gt;
-
-\
-
-En definitiva, es muy similar a otras vías por lo que es común llegar al mismo resultado por distintas vías.
-
-Como dato llamativo en la columna de &quot;Ingresos (Income)&quot; se trata de que hay valores que son cero. Es posible que realmente se refieran a $NAs$ así que podemos reemplazar los ceros con $NA$. La sintaxis es la siguiente:
-
-
-&lt;!-- rnb-text-end --&gt;
-
-
-&lt;!-- rnb-chunk-begin --&gt;
-
-
-&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuI0FjY2VkZW1vcyBhbCB2ZWN0b3IgcXVlIHJlcHJlc2VudGEgbGEgY29sdW1uYSBJbmNvbWUgeSBkZW50cm8gZGVsIHZlY3RvciBhY2NlZGVtb3MgYSBhcXVlbGxvcyB2YWxvcmVzIHF1ZSBzb24gZXhhY3RhbWVudGUgaWd1YWxlcyBhIGNlcm9cbmRhdGEkSW5jb21lW2RhdGEkSW5jb21lID09IDBdIDwtIE5BXG5gYGBcbmBgYCJ9 --&gt;
-
-```r
-```r
-#Accedemos al vector que representa la columna Income y dentro del vector accedemos a aquellos valores que son exactamente iguales a cero
-data$Income[data$Income == 0] &lt;- NA</code></pre>
-<pre><code>
-&lt;!-- rnb-source-end --&gt;
-
-&lt;!-- rnb-chunk-end --&gt;
-
-
-&lt;!-- rnb-text-begin --&gt;
-
-\
-
-Otra opción sería reemplazar los datos con un valor promedio. El problema que tenemos siempre que intentamos usar medidas de centralización en presencia de $NA$, es que el resultado siempre es $NA$. Aunque es una medida de seguridad para hacernos saber que existen datos desconocidos y que podrían falsear el cálculo, algunas veces nos interesa seguir con el cálculo. Para ello, usaremos la función _**na.rm = TRUE**_ (rm = remove). Por ejemplo:
-
-
-&lt;!-- rnb-text-end --&gt;
-
-
-&lt;!-- rnb-chunk-begin --&gt;
-
-
-&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxubWVhbihkYXRhJEluY29tZSlcbmBgYFxuYGBgIn0= --&gt;
-
-```r
-```r
-mean(data$Income)</code></pre>
-<pre><code>
-&lt;!-- rnb-source-end --&gt;
-
-&lt;!-- rnb-output-begin eyJkYXRhIjoiWzFdIE5BXG4ifQ== --&gt;
-</code></pre>
-<p>[1] NA</p>
-<pre><code>
-
-
-&lt;!-- rnb-output-end --&gt;
-
-&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxubWVhbihkYXRhJEluY29tZSwgbmEucm0gPSBUKVxuYGBgXG5gYGAifQ== --&gt;
-
-```r
-```r
-mean(data$Income, na.rm = T)</code></pre>
-<pre><code>
-&lt;!-- rnb-source-end --&gt;
-
-&lt;!-- rnb-output-begin eyJkYXRhIjoiWzFdIDY1NzYzLjY0XG4ifQ== --&gt;
-</code></pre>
-<p>[1] 65763.64 ```</p>
-<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuaG91c2luZy5kYXRhIDwtIHJlYWQuY3N2KFwiL1VzZXJzL21hY2Jvb2thcmllbC9MaWJyYXJ5L01vYmlsZSBEb2N1bWVudHMvY29tfmFwcGxlfkNsb3VkRG9jcy9AQVJJRUwvQUFERC9EYXRhU2NpZW5jZS9EYXRhU2NpZW5jZS1jb24tUlN0dWRpby9AQXJpZWwvYiBEYXRvcy90ZW1hMS9ob3VzaW5nLXdpdGgtbWlzc2luZy12YWx1ZS5jc3ZcIiwgaGVhZGVyID0gVFJVRSwgc3RyaW5nc0FzRmFjdG9ycyA9IEZBTFNFKVxuYGBgIn0= -->
+<pre class="r"><code>housing.data &lt;- read.csv(&quot;/Users/macbookariel/Library/Mobile Documents/com~apple~CloudDocs/@ARIEL/AADD/DataScience/DataScience-con-RStudio/@Ariel/b Datos/tema1/housing-with-missing-value.csv&quot;, header = TRUE, stringsAsFactors = FALSE)</code></pre>
+<!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <p><br />
-<br />
+Ante este dataframe, más o menos grande, el primer acercamiento es hacer un <em>resumen</em> de toda la información contenida. Esto lo conseguimos con la función <em><strong>summary</strong></em>.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc3VtbWFyeShob3VzaW5nLmRhdGEpIC0+IHN1bW1hcnlfaG91c2luZ1xuVmlldyAoc3VtbWFyeV9ob3VzaW5nKVxuYGBgIn0= -->
+<pre class="r"><code>summary(housing.data) -&gt; summary_housing
+View (summary_housing)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p><br />
 </p>
+<blockquote>
+<p>Toda esta información se ve un poco mejor haciéndolo directamente en consola. Ejecutamos summary(housing.data).</p>
+</blockquote>
+<p><br />
+La función <em><strong>summary</strong></em> hará un resumen por columnas de toda la información, entregándonos el mínimo, la media, la mediana, el máximo y, de haberlos, el número de observaciones <span class="math inline">\(NA\)</span>. En este caso, observamos que en las variables <em>rad</em> y <em>ptratio</em> hay al menos 40 observaciones como <span class="math inline">\(NA\)</span>.</p>
+<div id="opciones-para-completar-estos-datos." class="section level3">
+<h3>Opciones para completar estos datos.</h3>
+<p><br />
+</p>
+<div id="a-podríamos-omitir-todos-los-datos-na-con-la-función-na.omit" class="section level4">
+<h4>A) Podríamos omitir todos los datos <span class="math inline">\(NA\)</span>, con la función <em><strong>na.omit</strong></em></h4>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuaG91c2luZy5kYXRhMSA8LSBuYS5vbWl0KGhvdXNpbmcuZGF0YSlcbmBgYCJ9 -->
+<pre class="r"><code>housing.data1 &lt;- na.omit(housing.data)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p><br />
+Veremos que así todos los <span class="math inline">\(NAs\)</span> desaparecen <strong>PERO SE HABRÁN RECALCULADO LOS VALORES YA QUE SE ELIMINAN OBSERVACIONES Y HABRÁN VARIADO</strong>.<br />
+</p>
+</div>
+<div id="b-podríamos-omitir-todos-los-datos-na-unicamente-de-ciertas-columnas-mientras-nos-quedamos-con-valores-nas-de-otras-columnas" class="section level4">
+<h4>B) Podríamos omitir todos los datos <span class="math inline">\(NA\)</span> unicamente de ciertas columnas (mientras nos quedamos con valores <span class="math inline">\(NAs\)</span> de otras columnas)</h4>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZHJvcF9uYSA8LSBjKFwicmFkXCIpXG5ob3VzaW5nLmRhdGEuMiA8LSBob3VzaW5nLmRhdGEgW1xuICBjb21wbGV0ZS5jYXNlcyhob3VzaW5nLmRhdGFbLCAhKG5hbWVzKGhvdXNpbmcuZGF0YSkpJWluJSBkcm9wX25hXSksXG4gIF1cbmBgYCJ9 -->
+<pre class="r"><code>drop_na &lt;- c(&quot;rad&quot;)
+housing.data.2 &lt;- housing.data [
+  complete.cases(housing.data[, !(names(housing.data))%in% drop_na]),
+  ]</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p><br />
+</p>
+<p>En este ejemplo, guardamos el nombre de la columna “rad” (que contiene <span class="math inline">\(NAs\)</span> <strong>QUE QUEREMOS MANTENER</strong>), en una nueva variable que llamamos <em>drop_na</em>.<br />
+</p>
+<p>Luego, generamos un nuevo dataframe (llamado <em>housing.data.2</em>) donde guardaremos todas las columnas del dataframe anterior (por eso tenemos la sintaxis <em><strong>housing.data[ blablabla <strong>, </strong>]</strong></em>).<br />
+</p>
+<p>Esa sintaxis <em>blablabla</em> es la que nos permitirá escoger las filas (ya que está antes de la coma en los corchetes). En ella usamos la función <em><strong>complete.cases</strong></em> (que devuelve un array de booleanos analizando si la fila esté completa).<br />
+</p>
+<p>¿Y qué va a analizar <em><strong>complete.cases</strong></em>? Pues accederá a todas las filas ([,)y a las columnas cuyo nombre NO ESTÉ GUARDADO EN LA VARIABLE <em>drop_na</em> (!(names(housing.data))%in% drop_na]).<br />
+</p>
+</div>
+<div id="c-podríamos-eliminar-toda-la-columna-asígnando-el-valor-null" class="section level4">
+<h4>C) Podríamos eliminar toda la columna, asígnando el valor NULL</h4>
+<blockquote>
+<p>housing.data$rad -&gt; NULL #Eliminamos toda la columna “rad”.</p>
+</blockquote>
+</div>
+<div id="d-podríamos-eliminar-ciertas-columnas-con-na-y-quedarnos-con-aquellas-que-no-contienen-na." class="section level4">
+<h4>D) Podríamos eliminar ciertas columnas con <span class="math inline">\(NA\)</span> y quedarnos con aquellas que no contienen <span class="math inline">\(NA\)</span>.</h4>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZHJvcHMgPC0gYyhcInJhZFwiLCBcInB0cmF0aW9cIilcbmhvdXNpbmcuZGF0YS4zIDwtIGhvdXNpbmcuZGF0YSBbLCAhKG5hbWVzKGhvdXNpbmcuZGF0YSkgJWluJSBkcm9wcyldXG5gYGAifQ== -->
+<pre class="r"><code>drops &lt;- c(&quot;rad&quot;, &quot;ptratio&quot;)
+housing.data.3 &lt;- housing.data [, !(names(housing.data) %in% drops)]</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p><br />
+En esta última sintaxis, nos quedamos con todas las filas del dataset <em>housing.data</em> pero nos quedamos únicamente con aquellas columnas cuyo nombre no se encuentre entre los contenidos en la variable <em>drops</em>. En este caso, eliminaríamos 2 columnas.</p>
 <!-- rnb-text-end -->
 </div>
+</div>
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiVHJhYmFqbyBjb24gZGF0b3MgZmFsdGFudGVzIgpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sKLS0tCgojIyMgwr9Dw7NtbyB0cmFiYWphciBjb24gZGF0b3MgZmFsdGFudGVzIChNaXNzaW5nIERhdGEpPwpcCgpQYXJhIHRyYWJhamFyIGNvbiBkYXRvcyBmYWx0YW50ZXMsIHZhbW9zIGEgdXNhciB1biBDU1YgZW4gZWwgY3VhbCBmYWx0YW4gYWxndW5hcyBvYnNlcnZhY2lvbmVzIChfbWlzc2luZy1kYXRhLmNzdl8pLiAKCiogQ29tbyBzaWVtcHJlLCB2YW1vcyBhIGd1YXJkYXIgZWwgQ1NWIGVuIHVuYSB2YXJpYWJsZSBwYXJhIG5vIHRlbmVyIHF1ZSBhY2NlZGVyIGNvbnN0YW50ZW1lbnRlIGNvbiB0b2RhIGxhIHJ1dGEuIAoqIFNpIG5vIGluZGljYW1vcyBuYWRhLCBsb3MgZXNwYWNpb3MgdmFjw61vcyBzZSBsZWVyw6FuIGNvbW8gJE5BcyQuIAoqIFBlcm8gcGFyYSBldml0YXIgYW1iaWfDvGVkYWRlcywgdmFtb3MgYSBpbmRpY2FybG8gZXNwZWPDrWZpY2FtZW50ZSBjb24gYWwgYXJndW1lbnRvIF8qKm5hLnN0cmluZ3MgPSAiIioqXy4KCmBgYHtyfQpkYXRhIDwtIHJlYWQuY3N2KCIvVXNlcnMvbWFjYm9va2FyaWVsL0xpYnJhcnkvTW9iaWxlIERvY3VtZW50cy9jb21+YXBwbGV+Q2xvdWREb2NzL0BBUklFTC9BQUREL0RhdGFTY2llbmNlL0RhdGFTY2llbmNlLWNvbi1SU3R1ZGlvL0BBcmllbC9iIERhdG9zL3RlbWExL21pc3NpbmctZGF0YS5jc3YiLCBuYS5zdHJpbmdzID0gIiIpCmBgYApcCgpFbCBzaWd1aWVudGUgcGFzbyBzZXLDrWEgbGltcGlhciBlbCBkYXRhZnJhbWUsIGVzIGRlY2lyLCB2ZXIgcXXDqSBvcGNpb25lcyB0ZW5lbW9zIHBhcmEgdHJhYmFqYXIgY29uIGxvcyBkYXRvcyBubyBkaXNwb25pYmxlcyAoJE5BJCkuIFRlbmVtb3MgdmFyaWFzIG9wY2lvbmVzLgpcClwKCiMjIyMgYSkgT21pdGlyIGxvcyAkTkEkCgpgYGB7cn0KZGF0YS5jbGVhbmVkIDwtIG5hLm9taXQoZGF0YSkKYGBgClwKCkNvbiBlc3RhIHNpbnRheGlzIGhlbW9zIHRyYW5zZm9ybWFkbyBhIGNlcm9zLCB0b2RvcyBsb3MgJE5BcyQuIFNpbiBlbWJhcmdvLCBlcyBwb3NpYmxlIHF1ZSBvdHJhcyB2ZWNlcyBxdWVycmFtb3Mgb3RyYXMgdmVyc2lvbmVzIG5vIHRhbiBkZXN0cnVjdGl2YXMuClwKXAoKIyMjIyBiKSBMaW1waWV6YSBkZSAkTkEkIGRlIHZhcmlhYmxlcyBzZWxlY2Npb25hZGFzLgpcCgpQb3IgZWplbXBsbywgY29uIHVuYSBsaW1waWV6YSBzZWxlY3RpdmEgcG9yIGNvbHVtbmFzLiBFbiBlbCBzaWd1aWVudGUgZWplbXBsbyBoYXLDrWFtb3MgdW5hIGV4dHJhY2Npw7NuIHNlbGVjdGl2YSBkZSB0b2RvcyBsYXMgZmlsYXMgZG9uZGUgbm8gaGF5ICROQXMkIGRlbnRybyBkZSBsYSBjb2x1bW5hICJJbmNvbWUiIHkgbm9zIHF1ZWRhcsOtYW1vcyBjb24gdG9kYXMgbGFzIGNvbHVtbmFzLiBUb2RhIGVzdGEgZXh0cmFjY2nDs24gbGEgZ3VhcmRhbW9zIGVuIHVuYSBudWV2YSB2YXJpYWJsZSBxdWUgc2UgbGxhbWFyw6EgZGF0YS5pbmNvbWUuY2xlYW5lZCAoKipDT01QQVJBUiBFU1RBIFZBUklBQkxFIENPTiBMQSBQUk9QSUEgREFUQSBRVUUgRVMgTEEgT1JJR0lOQUwqKikuCgpgYGB7cn0KI0xpbXBpYXIgTkFzIHNvbGFtZW50ZSBkZSBsYSB2YXJpYWJsZSBJTkNPTUUKZGF0YS5pbmNvbWUuY2xlYW5lZCA8LSBkYXRhWyFpcy5uYShkYXRhJEluY29tZSksXQpgYGAKXAoKT3RyYSBvcGVyYWNpw7NuIHBhcmEgb2J0ZW5lciBlbCBtaXNtbyByZXN1bHRhZG8gcXVlIHV0aWxpemFuZG8gXyoqbmEub21pdCoqXyBlcyB1c2FyIGxhIHNpbnRheGlzIF8qKmNvbXBsZXRlLmNhc2VzKipfLiBFc3RhIGZ1bmNpw7NuIGRldnVlbHZlIHVuIGFycmF5IGRlIGRhdG9zIGJvb2xlYW5vcyB5IHBvZHLDrWFtb3MgaGFjZXIgdW5hIGV4dHJhY2Npw7NuIHNlbGVjdGl2YSBxdWVkw6FuZG9ub3MgY29uIHRvZGFzIGxhIGZpbGFzIHF1ZSBlc3TDqW4gY29tcGxldGFzIHkgY29uIHRvZGFzIGxhcyBjb2x1bW5hczoKCmBgYHtyfQpkYXRhLmNsZWFuZWQuMiA8LSBkYXRhW2NvbXBsZXRlLmNhc2VzKGRhdGEpLF0KYGBgClwKCkVuIGRlZmluaXRpdmEsIGVzIG11eSBzaW1pbGFyIGEgb3RyYXMgdsOtYXMgcG9yIGxvIHF1ZSBlcyBjb23Dum4gbGxlZ2FyIGFsIG1pc21vIHJlc3VsdGFkbyBwb3IgZGlzdGludGFzIHbDrWFzLgoKQ29tbyBkYXRvIGxsYW1hdGl2byBlbiBsYSBjb2x1bW5hIGRlICJJbmdyZXNvcyAoSW5jb21lKSIgc2UgdHJhdGEgZGUgcXVlIGhheSB2YWxvcmVzIHF1ZSBzb24gY2Vyby4gRXMgcG9zaWJsZSBxdWUgcmVhbG1lbnRlIHNlIHJlZmllcmFuIGEgJE5BcyQgYXPDrSBxdWUgcG9kZW1vcyByZWVtcGxhemFyIGxvcyBjZXJvcyBjb24gJE5BJC4gTGEgc2ludGF4aXMgZXMgbGEgc2lndWllbnRlOgoKYGBge3J9CiNBY2NlZGVtb3MgYWwgdmVjdG9yIHF1ZSByZXByZXNlbnRhIGxhIGNvbHVtbmEgSW5jb21lIHkgZGVudHJvIGRlbCB2ZWN0b3IgYWNjZWRlbW9zIGEgYXF1ZWxsb3MgdmFsb3JlcyBxdWUgc29uIGV4YWN0YW1lbnRlIGlndWFsZXMgYSBjZXJvCmRhdGEkSW5jb21lW2RhdGEkSW5jb21lID09IDBdIDwtIE5BCgojIE9KTyBQT1JRVUUgQ0FNQklBTU9TIEVMIERBVEFGUkFNRSBPUklHSU5BTApgYGAKXAoKT3RyYSBvcGNpw7NuIHNlcsOtYSByZWVtcGxhemFyIGxvcyBkYXRvcyBjb24gdW4gdmFsb3IgcHJvbWVkaW8uIEVsIHByb2JsZW1hIHF1ZSB0ZW5lbW9zIHNpZW1wcmUgcXVlIGludGVudGFtb3MgdXNhciBtZWRpZGFzIGRlIGNlbnRyYWxpemFjacOzbiBlbiBwcmVzZW5jaWEgZGUgJE5BJCwgZXMgcXVlIGVsIHJlc3VsdGFkbyBzaWVtcHJlIGVzICROQSQuIEF1bnF1ZSBlcyB1bmEgbWVkaWRhIGRlIHNlZ3VyaWRhZCBwYXJhIGhhY2Vybm9zIHNhYmVyIHF1ZSBleGlzdGVuIGRhdG9zIGRlc2Nvbm9jaWRvcyB5IHF1ZSBwb2Ryw61hbiBmYWxzZWFyIGVsIGPDoWxjdWxvLCBhbGd1bmFzIHZlY2VzIG5vcyBpbnRlcmVzYSBzZWd1aXIgY29uIGVsIGPDoWxjdWxvLiBQYXJhIGVsbG8sIHVzYXJlbW9zIGxhIGZ1bmNpw7NuIF8qKm5hLnJtID0gVFJVRSoqXyAocm0gPSByZW1vdmUpLiBQb3IgZWplbXBsbzoKCmBgYHtyfQptZWFuKGRhdGEkSW5jb21lKQptZWFuKGRhdGEkSW5jb21lLCBuYS5ybSA9IFQpCmBgYAoKXApcCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgo=</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiT3BjaW9uZXMgcGFyYSBjb21wbGV0YXIgZGF0b3MiCm91dHB1dDogaHRtbF9ub3RlYm9vawotLS0KXAoKRW4gZWwgbm90ZWJvb2sgNiBoYWLDrWFtb3MgcmVhbGl6YWRvIHVuYSBwcmltZXJhIGFwcm94aW1hY2nDs24uIFZlYW1vcyBhaG9yYSB1biBwb2NvIG3DoXMgZW4gcHJvZnVuZGlkYWQgYWNlcmNhIGRlIGPDs21vIHRyYWJhamFyIGNvbiBkYXRvcyBmYWx0YW50ZXMuIFBhcmEgZWxsbywgdmFtb3MgYSBjYXJnYXIgZWwgZGF0YXNldCBkZSB0cmFiYWpvIHkgYSBndWFyZGFybG8gZW4gdW5hIHZhcmlhYmxlLiBWYW1vcyBhIGVzcGVjaWZpY2FyIHF1ZSBlbCBkYXRhc2V0IHRpZW5lIGNhYmVjZXJhIHkgYWRlbcOhcywgdmFtb3MgYSBpbmRpY2FyIHF1ZSBubyBpZGVudGlmaXF1ZSBsb3Mgc3RyaW5ncyBjb21vIGZhY3RvcmVzLCB5YSBxdWUgZWwgZGF0YXNldCB0aWVuZSB2YWxvcmVzIE5BIHF1ZSBwb2Ryw61hbiBpbnRlcnByZXRhcnNlIGNvbW8gdmFsb3JlcyBkaXNjcmV0b3MuCgpgYGB7cn0KaG91c2luZy5kYXRhIDwtIHJlYWQuY3N2KCIvVXNlcnMvbWFjYm9va2FyaWVsL0xpYnJhcnkvTW9iaWxlIERvY3VtZW50cy9jb21+YXBwbGV+Q2xvdWREb2NzL0BBUklFTC9BQUREL0RhdGFTY2llbmNlL0RhdGFTY2llbmNlLWNvbi1SU3R1ZGlvL0BBcmllbC9iIERhdG9zL3RlbWExL2hvdXNpbmctd2l0aC1taXNzaW5nLXZhbHVlLmNzdiIsIGhlYWRlciA9IFRSVUUsIHN0cmluZ3NBc0ZhY3RvcnMgPSBGQUxTRSkKYGBgClwKQW50ZSBlc3RlIGRhdGFmcmFtZSwgbcOhcyBvIG1lbm9zIGdyYW5kZSwgZWwgcHJpbWVyIGFjZXJjYW1pZW50byBlcyBoYWNlciB1biBfcmVzdW1lbl8gZGUgdG9kYSBsYSBpbmZvcm1hY2nDs24gY29udGVuaWRhLiBFc3RvIGxvIGNvbnNlZ3VpbW9zIGNvbiBsYSBmdW5jacOzbiBfKipzdW1tYXJ5KipfLgoKYGBge3J9CnN1bW1hcnkoaG91c2luZy5kYXRhKSAtPiBzdW1tYXJ5X2hvdXNpbmcKVmlldyAoc3VtbWFyeV9ob3VzaW5nKQpgYGAKXAoKPiBUb2RhIGVzdGEgaW5mb3JtYWNpw7NuIHNlIHZlIHVuIHBvY28gbWVqb3IgaGFjacOpbmRvbG8gZGlyZWN0YW1lbnRlIGVuIGNvbnNvbGEuIEVqZWN1dGFtb3Mgc3VtbWFyeShob3VzaW5nLmRhdGEpLgoKXApMYSBmdW5jacOzbiBfKipzdW1tYXJ5KipfIGhhcsOhIHVuIHJlc3VtZW4gcG9yIGNvbHVtbmFzIGRlIHRvZGEgbGEgaW5mb3JtYWNpw7NuLCBlbnRyZWfDoW5kb25vcyBlbCBtw61uaW1vLCBsYSBtZWRpYSwgbGEgbWVkaWFuYSwgZWwgbcOheGltbyB5LCBkZSBoYWJlcmxvcywgZWwgbsO6bWVybyBkZSBvYnNlcnZhY2lvbmVzICROQSQuIEVuIGVzdGUgY2Fzbywgb2JzZXJ2YW1vcyBxdWUgZW4gbGFzIHZhcmlhYmxlcyBfcmFkXyB5IF9wdHJhdGlvXyBoYXkgYWwgbWVub3MgNDAgb2JzZXJ2YWNpb25lcyBjb21vICROQSQuCgojIyMgT3BjaW9uZXMgcGFyYSBjb21wbGV0YXIgZXN0b3MgZGF0b3MuClwKCiMjIyMgQSkgUG9kcsOtYW1vcyBvbWl0aXIgdG9kb3MgbG9zIGRhdG9zICROQSQsIGNvbiBsYSBmdW5jacOzbiBfKipuYS5vbWl0KipfCgpgYGB7cn0KaG91c2luZy5kYXRhMSA8LSBuYS5vbWl0KGhvdXNpbmcuZGF0YSkKYGBgClwKVmVyZW1vcyBxdWUgYXPDrSB0b2RvcyBsb3MgJE5BcyQgZGVzYXBhcmVjZW4gKipQRVJPIFNFIEhBQlLDgU4gUkVDQUxDVUxBRE8gTE9TIFZBTE9SRVMgWUEgUVVFIFNFIEVMSU1JTkFOIE9CU0VSVkFDSU9ORVMgWSBIQUJSw4FOIFZBUklBRE8qKi4KXAoKCiMjIyMgQikgUG9kcsOtYW1vcyBvbWl0aXIgdG9kb3MgbG9zIGRhdG9zICROQSQgdW5pY2FtZW50ZSBkZSBjaWVydGFzIGNvbHVtbmFzIChtaWVudHJhcyBub3MgcXVlZGFtb3MgY29uIHZhbG9yZXMgJE5BcyQgZGUgb3RyYXMgY29sdW1uYXMpCgpgYGB7cn0KZHJvcF9uYSA8LSBjKCJyYWQiKQpob3VzaW5nLmRhdGEuMiA8LSBob3VzaW5nLmRhdGEgWwogIGNvbXBsZXRlLmNhc2VzKGhvdXNpbmcuZGF0YVssICEobmFtZXMoaG91c2luZy5kYXRhKSklaW4lIGRyb3BfbmFdKSwKICBdCmBgYApcCgpFbiBlc3RlIGVqZW1wbG8sIGd1YXJkYW1vcyBlbCBub21icmUgZGUgbGEgY29sdW1uYSAicmFkIiAocXVlIGNvbnRpZW5lICROQXMkICAqKlFVRSBRVUVSRU1PUyBNQU5URU5FUioqKSwgZW4gdW5hIG51ZXZhIHZhcmlhYmxlIHF1ZSBsbGFtYW1vcyBfZHJvcF9uYV8uClwKCkx1ZWdvLCBnZW5lcmFtb3MgdW4gbnVldm8gZGF0YWZyYW1lIChsbGFtYWRvIF9ob3VzaW5nLmRhdGEuMl8pIGRvbmRlIGd1YXJkYXJlbW9zIHRvZGFzIGxhcyBjb2x1bW5hcyBkZWwgZGF0YWZyYW1lIGFudGVyaW9yIChwb3IgZXNvIHRlbmVtb3MgbGEgc2ludGF4aXMgXyoqaG91c2luZy5kYXRhWyBibGFibGFibGEgKiosICoqXSoqXykuClwKCkVzYSBzaW50YXhpcyBfYmxhYmxhYmxhXyBlcyBsYSBxdWUgbm9zIHBlcm1pdGlyw6EgZXNjb2dlciBsYXMgZmlsYXMgKHlhIHF1ZSBlc3TDoSBhbnRlcyBkZSBsYSBjb21hIGVuIGxvcyBjb3JjaGV0ZXMpLiBFbiBlbGxhIHVzYW1vcyBsYSBmdW5jacOzbiBfKipjb21wbGV0ZS5jYXNlcyoqXyAocXVlIGRldnVlbHZlIHVuIGFycmF5IGRlIGJvb2xlYW5vcyBhbmFsaXphbmRvIHNpIGxhIGZpbGEgZXN0w6kgY29tcGxldGEpLgpcCgrCv1kgcXXDqSB2YSBhIGFuYWxpemFyIF8qKmNvbXBsZXRlLmNhc2VzKipfPyBQdWVzIGFjY2VkZXLDoSBhIHRvZGFzIGxhcyBmaWxhcyAoWywpeSBhIGxhcyBjb2x1bW5hcyBjdXlvIG5vbWJyZSBOTyBFU1TDiSBHVUFSREFETyBFTiBMQSBWQVJJQUJMRSBfZHJvcF9uYV8gKCEobmFtZXMoaG91c2luZy5kYXRhKSklaW4lIGRyb3BfbmFdKS4KXAoKCiMjIyMgQykgUG9kcsOtYW1vcyBlbGltaW5hciB0b2RhIGxhIGNvbHVtbmEsIGFzw61nbmFuZG8gZWwgdmFsb3IgTlVMTAoKPiBob3VzaW5nLmRhdGEkcmFkIC0+IE5VTEwgI0VsaW1pbmFtb3MgdG9kYSBsYSBjb2x1bW5hICJyYWQiLgoKCiMjIyMgRCkgUG9kcsOtYW1vcyBlbGltaW5hciBjaWVydGFzIGNvbHVtbmFzIGNvbiAkTkEkIHkgcXVlZGFybm9zIGNvbiBhcXVlbGxhcyBxdWUgbm8gY29udGllbmVuICROQSQuCgpgYGB7cn0KZHJvcHMgPC0gYygicmFkIiwgInB0cmF0aW8iKQpob3VzaW5nLmRhdGEuMyA8LSBob3VzaW5nLmRhdGEgWywgIShuYW1lcyhob3VzaW5nLmRhdGEpICVpbiUgZHJvcHMpXQpgYGAKXApFbiBlc3RhIMO6bHRpbWEgc2ludGF4aXMsIG5vcyBxdWVkYW1vcyBjb24gdG9kYXMgbGFzIGZpbGFzIGRlbCBkYXRhc2V0IF9ob3VzaW5nLmRhdGFfIHBlcm8gbm9zIHF1ZWRhbW9zIMO6bmljYW1lbnRlIGNvbiBhcXVlbGxhcyBjb2x1bW5hcyBjdXlvIG5vbWJyZSBubyBzZSBlbmN1ZW50cmUgZW50cmUgbG9zIGNvbnRlbmlkb3MgZW4gbGEgdmFyaWFibGUgX2Ryb3BzXy4gRW4gZXN0ZSBjYXNvLCBlbGltaW5hcsOtYW1vcyAyIGNvbHVtbmFzLgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCg==</div>
 
 
 
@@ -2000,7 +1908,7 @@ $(document).ready(function () {
 <!-- code folding -->
 <script>
 $(document).ready(function () {
-  window.initializeSourceEmbed("06 Tratando con datos faltantes NA.Rmd");
+  window.initializeSourceEmbed("13 Completar datos faltantes.Rmd");
   window.initializeCodeFolding("show" === "show");
 });
 </script>

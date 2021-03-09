@@ -1788,76 +1788,153 @@ summary {
 <p>Por ahora veamos cómo leer un archivo y guardarlo en una variable que, en este caso, se llama <em>“auto”</em>:</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYXV0byA8LSByZWFkLmNzdiAoXCIvVXNlcnMvbWFjYm9va2FyaWVsL0xpYnJhcnkvTW9iaWxlIERvY3VtZW50cy9jb21+YXBwbGV+Q2xvdWREb2NzL0BBUklFTC9BQUREL0RhdGFTY2llbmNlL0RhdGFTY2llbmNlLWNvbi1SU3R1ZGlvL0BBcmllbC9iIERhdG9zL3RlbWExL2F1dG8tbXBnLmNzdlwiKVxuYGBgIn0= -->
-<pre class="r"><code>auto &lt;- read.csv (&quot;/Users/macbookariel/Library/Mobile Documents/com~apple~CloudDocs/@ARIEL/AADD/DataScience/DataScience-con-RStudio/@Ariel/b Datos/tema1/auto-mpg.csv&quot;)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p><br />
-Como resultado de la operación anterior, se habrá creado la variable <em>auto</em> que se podrá ver en la pestaña <em><strong>Global Environment</strong></em>.<br />
-<br />
-</p>
-<div id="opciones-de-read.csv" class="section level3">
-<h3>Opciones de <em><strong>read.csv</strong></em></h3>
-<p>La función <em><strong>read.csv</strong></em> tiene varias opciones, siendo obligatoria la localización del archivo.</p>
-<p>Podríamos utilizar la opción <strong><em>header = T/F</em></strong> que indicaría la presencia o ausencia de cabecera (es decir, si la primera fila es un dato o una descripción de las observaciones). Cuando abrimos un archivo que no contiene cabecera, por defecto R (RStudio) generará unos nombres de variable como “V1, V2…”.</p>
-<p>En algunos casos puede ser útil usar la función <em><strong>head</strong></em>, que nos devolverá las primeras filas del archivo leído y verificar qué se ha cargado</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuaGVhZChhdXRvKVxuYGBgIn0= -->
-<pre class="r"><code>head(auto)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p><br />
-</p>
-<p>Otro parámetro adicional es <em><strong>col.names</strong></em> que nos permitirá definir específicamente el nombre de las columnas (“cabeceras personalizadas”), que ingresaremos en un vector (c) y entrecomilladas.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYXV0b19jdXN0b21faGVhZGVyIDwtIHJlYWQuY3N2KFwiL1VzZXJzL21hY2Jvb2thcmllbC9MaWJyYXJ5L01vYmlsZSBEb2N1bWVudHMvY29tfmFwcGxlfkNsb3VkRG9jcy9AQVJJRUwvQUFERC9EYXRhU2NpZW5jZS9EYXRhU2NpZW5jZS1jb24tUlN0dWRpby9AQXJpZWwvYiBEYXRvcy90ZW1hMS9hdXRvLW1wZy5jc3ZcIiwgXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgaGVhZGVyID0gRiwgXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgY29sLm5hbWVzID0gYyhcIm7Dum1lcm9cIiwgXCJtaWxsYXMtZ2Fsw7NuXCIsIFwiY2lsaW5kcmFkYVwiLCBcImRlc3BsYXphbWllbnRvXCIsIFwiY2FiYWxsb3MtcG90ZW5jaWFcIiwgXCJwZXNvXCIsIFwiYWNlbGVyYWNpw7NuXCIsIFwiYcOxb1wiLCBcIm1vZGVsb1wiKSlcbmBgYCJ9 -->
-<pre class="r"><code>auto_custom_header &lt;- read.csv(&quot;/Users/macbookariel/Library/Mobile Documents/com~apple~CloudDocs/@ARIEL/AADD/DataScience/DataScience-con-RStudio/@Ariel/b Datos/tema1/auto-mpg.csv&quot;, 
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuYXV0byA8LSByZWFkLmNzdiAoXFwvVXNlcnMvbWFjYm9va2FyaWVsL0xpYnJhcnkvTW9iaWxlIERvY3VtZW50cy9jb21+YXBwbGV+Q2xvdWREb2NzL0BBUklFTC9BQUREL0RhdGFTY2llbmNlL0RhdGFTY2llbmNlLWNvbi1SU3R1ZGlvL0BBcmllbC9iIERhdG9zL3RlbWExL2F1dG8tbXBnLmNzdlxcKVxuYGBgXG5gYGAifQ== -->
+<pre class="r"><code>```r
+auto &lt;- read.csv (\/Users/macbookariel/Library/Mobile Documents/com~apple~CloudDocs/@ARIEL/AADD/DataScience/DataScience-con-RStudio/@Ariel/b Datos/tema1/auto-mpg.csv\)</code></pre>
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+\
+Como resultado de la operación anterior, se habrá creado la variable _auto_ que se podrá ver en la pestaña _**Global Environment**_.
+\
+\
+
+### Opciones de _**read.csv**_
+
+La función _**read.csv**_ tiene varias opciones, siendo obligatoria la localización del archivo. 
+
+Podríamos utilizar la opción __*header = T/F*__ que indicaría la presencia o ausencia de cabecera (es decir, si la primera fila es un dato o una descripción de las observaciones). Cuando abrimos un archivo que no contiene cabecera, por defecto R (RStudio) generará unos nombres de variable como &quot;V1, V2...&quot;.
+
+En algunos casos puede ser útil usar la función _**head**_, que nos devolverá las primeras filas del archivo leído y verificar qué se ha cargado
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuaGVhZChhdXRvKVxuYGBgXG5gYGAifQ== --&gt;
+
+```r
+```r
+head(auto)</code></pre>
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+\
+
+Otro parámetro adicional es _**col.names**_ que nos permitirá definir específicamente el nombre de las columnas (&quot;cabeceras personalizadas&quot;), que ingresaremos en un vector (c) y entrecomilladas.
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuYXV0b19jdXN0b21faGVhZGVyIDwtIHJlYWQuY3N2KFxcL1VzZXJzL21hY2Jvb2thcmllbC9MaWJyYXJ5L01vYmlsZSBEb2N1bWVudHMvY29tfmFwcGxlfkNsb3VkRG9jcy9AQVJJRUwvQUFERC9EYXRhU2NpZW5jZS9EYXRhU2NpZW5jZS1jb24tUlN0dWRpby9AQXJpZWwvYiBEYXRvcy90ZW1hMS9hdXRvLW1wZy5jc3ZcXCwgXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgaGVhZGVyID0gRiwgXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgY29sLm5hbWVzID0gYyhcXG7Dum1lcm9cXCwgXFxtaWxsYXMtZ2Fsw7NuXFwsIFxcY2lsaW5kcmFkYVxcLCBcXGRlc3BsYXphbWllbnRvXFwsIFxcY2FiYWxsb3MtcG90ZW5jaWFcXCwgXFxwZXNvXFwsIFxcYWNlbGVyYWNpw7NuXFwsIFxcYcOxb1xcLCBcXG1vZGVsb1xcKSlcbmBgYFxuYGBgIn0= --&gt;
+
+```r
+```r
+auto_custom_header &lt;- read.csv(\/Users/macbookariel/Library/Mobile Documents/com~apple~CloudDocs/@ARIEL/AADD/DataScience/DataScience-con-RStudio/@Ariel/b Datos/tema1/auto-mpg.csv\, 
                                header = F, 
-                               col.names = c(&quot;número&quot;, &quot;millas-galón&quot;, &quot;cilindrada&quot;, &quot;desplazamiento&quot;, &quot;caballos-potencia&quot;, &quot;peso&quot;, &quot;aceleración&quot;, &quot;año&quot;, &quot;modelo&quot;))</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p><br />
-</p>
-<p>Veamos cómo han quedado las dos primeras filas (parámetro <em><strong>head</strong></em>):</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuaGVhZChhdXRvX2N1c3RvbV9oZWFkZXIsIDIpXG5gYGAifQ== -->
-<pre class="r"><code>head(auto_custom_header, 2)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p><br />
-</p>
-<p>Otra opción interesante al leer un CSV tiene que ver con cómo designa los valores no disponibles (<span class="math inline">\(NA\)</span>).</p>
-<p>Es posible:</p>
-<ol style="list-style-type: decimal">
-<li>Indicar cómo queremos que sean rellenadas las observaciones que faltan o bien,</li>
-<li>Indicar cómo están codificados los valores no disponibles en el documento leído.<br />
-</li>
-</ol>
-<p>En general, los valores <span class="math inline">\(NA\)</span> aparecen con el string NA, pero es posible que algún CSV contenga otro string para significar valores no disponibles (por ejemplo: N/A, null, na, etc.). En ese caso se puede indicar, al abrir el CSV, cómo vamos a llamar a los NAs. Para ello haremos uso de la función <em><strong>string.na = “grafía correspondiente”</strong></em> o bien <em><strong>string.na = &quot;&quot;</strong></em> (string vacío).<br />
-</p>
-<p>Otra opción que debemos tener en cuenta al abrir un archivo, es que R suele considerar los <em>strings</em> como si fueran factores (variables categóricas). Para evitar esta conversión directa, y usar los <em>strings</em> como <em>strings</em> podemos agregar la opción <em><strong>stringAsFactors = FALSE</strong></em></p>
-<p>Finalmente, se podrían cargar los datos a partir de una ruta web. Por ejemplo:</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYXV0b193ZWIgPC0gcmVhZC5jc3YoXCJodHRwczovL2Zyb2dhbWVzLmVzL2NvdXJzZS1jb250ZW50cy9yL2ludHJvL3RlbWExL1dITy5jc3ZcIilcbmBgYCJ9 -->
-<pre class="r"><code>auto_web &lt;- read.csv(&quot;https://frogames.es/course-contents/r/intro/tema1/WHO.csv&quot;)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<ul>
-<li>Veamos si la carga desde la web ha ido bien con el comando <em><strong>head</strong></em>:</li>
-</ul>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuaGVhZChhdXRvX3dlYiwgMTApXG5gYGAifQ== -->
-<pre class="r"><code>head(auto_web, 10)</code></pre>
+                               col.names = c(\número\, \millas-galón\, \cilindrada\, \desplazamiento\, \caballos-potencia\, \peso\, \aceleración\, \año\, \modelo\))</code></pre>
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+\
+
+Veamos cómo han quedado las dos primeras filas (parámetro _**head**_):
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuaGVhZChhdXRvX2N1c3RvbV9oZWFkZXIsIDIpXG5gYGBcbmBgYCJ9 --&gt;
+
+```r
+```r
+head(auto_custom_header, 2)</code></pre>
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+\
+
+Otra opción interesante al leer un CSV tiene que ver con cómo designa los valores no disponibles ($NA$). 
+
+Es posible:
+
+1. Indicar cómo queremos que sean rellenadas las observaciones que faltan o bien,
+2. Indicar cómo están codificados los valores no disponibles en el documento leído.
+\
+
+En general, los valores $NA$ aparecen con el string NA, pero es posible que algún CSV contenga otro string para significar valores no disponibles (por ejemplo: N/A, null, na, etc.). En ese caso se puede indicar, al abrir el CSV, cómo vamos a llamar a los NAs. Para ello haremos uso de la función _**string.na = &quot;grafía correspondiente&quot;**_ o bien _**string.na = &quot;&quot;**_ (string vacío).
+\
+
+Otra opción que debemos tener en cuenta al abrir un archivo, es que R suele considerar los _strings_ como si fueran factores (variables categóricas). Para evitar esta conversión directa, y usar los _strings_ como _strings_ podemos agregar la opción _**stringAsFactors = FALSE**_
+
+Finalmente, se podrían cargar los datos a partir de una ruta web. Por ejemplo:
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuYXV0b193ZWIgPC0gcmVhZC5jc3YoXFxodHRwczovL2Zyb2dhbWVzLmVzL2NvdXJzZS1jb250ZW50cy9yL2ludHJvL3RlbWExL1dITy5jc3ZcXClcbmBgYFxuYGBgIn0= --&gt;
+
+```r
+```r
+auto_web &lt;- read.csv(\https://frogames.es/course-contents/r/intro/tema1/WHO.csv\)</code></pre>
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+* Veamos si la carga desde la web ha ido bien con el comando _**head**_:
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuaGVhZChhdXRvX3dlYiwgMTApXG5gYGBcbmBgYCJ9 --&gt;
+
+```r
+```r
+head(auto_web, 10)</code></pre>
+<p>```</p>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
@@ -1867,7 +1944,6 @@ Como resultado de la operación anterior, se habrá creado la variable <em>auto<
 <br />
 </p>
 <!-- rnb-text-end -->
-</div>
 </div>
 
 <div id="rmd-source-code">LS0tCnRpdGxlOiAiTGVjdHVyYSB5IG9wY2lvbmVzIGRlIENTViIKb3V0cHV0OiBodG1sX25vdGVib29rCi0tLQojIyBBYnJpZW5kbyB1biBDU1YKXAoKKiBWYW1vcyBhIGFicmlyIHVuIC5jc3YgeSBsbyB2YW1vcyBhIGFzaWduYXIgYSB1bmEgdmFyaWFibGUuIApFbiBlc3RlIGNhc28sIGxhIHZhcmlhYmxlIHNlIGxsYW1hcsOhIF8iYXV0byJfLiBQYXJhIGhhY2VyIGxhIGxlY3R1cmEgdXNhcmVtb3MgbGEgZnVuY2nDs24gX3JlYWQuY3N2XyBzZWd1aWRvIGRlIGNvbWlsbGFzIGRvYmxlcy4KKiBFbnRyZSBkaWNoYXMgY29taWxsYXMgZXNjcmliaXJlbW9zIGxhIHJ1dGEgZMOzbmRlIHNlIGVuY3VlbnRyYSBlbCBhcmNoaXZvIGEgbGVlci4gCiogQ29tbyBubyBzdWVsZSBzZW5jaWxsbyBlc2NyaWJpciBlc2EgcnV0YSwgYmFzdGEgY29uIHF1ZSB1c2Vtb3MgZWwgdGFidWxhZG9yIHBhcmEgaXIgYXV0b2NvbXBsZXRhbmRvLiAKKiBFbiBnZW5lcmFsLCBsYSBydXRhICJhcnJhbmNhIiBlbiBlbCBkaXJlY3RvcmlvIHF1ZSBoYXlhbW9zIGVzdGFibGVjaWRvIGNvbW8gZGlyZWN0b3JpbyBkZSB0cmFiYWpvIChfd29ya2luZyBkaXJlY3RvcnlfKS4KKiBUYW1iacOpbiBlcyBwb3NpYmxlIHV0aWxpemFyIGxhIGdyYWbDrWEgIi4uIiAocHVudG8gcHVudG8pIHF1ZSBpbmRpY2EgcXVlIHNlIGRlYmUgc3ViaXIgdW4gbml2ZWwgZW4gZWwgw6FyYm9sIGRlIGFyY2hpdm9zLgpcClwKClBvciBhaG9yYSB2ZWFtb3MgY8OzbW8gbGVlciB1biBhcmNoaXZvIHkgZ3VhcmRhcmxvIGVuIHVuYSB2YXJpYWJsZSBxdWUsIGVuIGVzdGUgY2Fzbywgc2UgbGxhbWEgXyJhdXRvIl86CgpgYGB7ciBHdWFyZGFyIENTViBlbiB2YXJpYWJsZX0KYXV0byA8LSByZWFkLmNzdiAoIi9Vc2Vycy9tYWNib29rYXJpZWwvTGlicmFyeS9Nb2JpbGUgRG9jdW1lbnRzL2NvbX5hcHBsZX5DbG91ZERvY3MvQEFSSUVML0FBREQvRGF0YVNjaWVuY2UvRGF0YVNjaWVuY2UtY29uLVJTdHVkaW8vQEFyaWVsL2IgRGF0b3MvdGVtYTEvYXV0by1tcGcuY3N2IikKYGBgClwKQ29tbyByZXN1bHRhZG8gZGUgbGEgb3BlcmFjacOzbiBhbnRlcmlvciwgc2UgaGFicsOhIGNyZWFkbyBsYSB2YXJpYWJsZSBfYXV0b18gcXVlIHNlIHBvZHLDoSB2ZXIgZW4gbGEgcGVzdGHDsWEgXyoqR2xvYmFsIEVudmlyb25tZW50KipfLgpcClwKCiMjIyBPcGNpb25lcyBkZSBfKipyZWFkLmNzdioqXwoKTGEgZnVuY2nDs24gXyoqcmVhZC5jc3YqKl8gdGllbmUgdmFyaWFzIG9wY2lvbmVzLCBzaWVuZG8gb2JsaWdhdG9yaWEgbGEgbG9jYWxpemFjacOzbiBkZWwgYXJjaGl2by4gCgpQb2Ryw61hbW9zIHV0aWxpemFyIGxhIG9wY2nDs24gX18qaGVhZGVyID0gVC9GKl9fIHF1ZSBpbmRpY2Fyw61hIGxhIHByZXNlbmNpYSBvIGF1c2VuY2lhIGRlIGNhYmVjZXJhIChlcyBkZWNpciwgc2kgbGEgcHJpbWVyYSBmaWxhIGVzIHVuIGRhdG8gbyB1bmEgZGVzY3JpcGNpw7NuIGRlIGxhcyBvYnNlcnZhY2lvbmVzKS4gQ3VhbmRvIGFicmltb3MgdW4gYXJjaGl2byBxdWUgbm8gY29udGllbmUgY2FiZWNlcmEsIHBvciBkZWZlY3RvIFIgKFJTdHVkaW8pIGdlbmVyYXLDoSB1bm9zIG5vbWJyZXMgZGUgdmFyaWFibGUgY29tbyAiVjEsIFYyLi4uIi4KCkVuIGFsZ3Vub3MgY2Fzb3MgcHVlZGUgc2VyIMO6dGlsIHVzYXIgbGEgZnVuY2nDs24gXyoqaGVhZCoqXywgcXVlIG5vcyBkZXZvbHZlcsOhIGxhcyBwcmltZXJhcyBmaWxhcyBkZWwgYXJjaGl2byBsZcOtZG8geSB2ZXJpZmljYXIgcXXDqSBzZSBoYSBjYXJnYWRvCgpgYGB7cn0KaGVhZChhdXRvKQpgYGAKXAoKT3RybyBwYXLDoW1ldHJvIGFkaWNpb25hbCBlcyBfKipjb2wubmFtZXMqKl8gcXVlIG5vcyBwZXJtaXRpcsOhIGRlZmluaXIgZXNwZWPDrWZpY2FtZW50ZSBlbCBub21icmUgZGUgbGFzIGNvbHVtbmFzICgiY2FiZWNlcmFzIHBlcnNvbmFsaXphZGFzIiksIHF1ZSBpbmdyZXNhcmVtb3MgZW4gdW4gdmVjdG9yIChjKSB5IGVudHJlY29taWxsYWRhcy4KCmBgYHtyIE9wY2lvbmVzIGRlIGxlY3R1cmEgZGUgQ1NWfQphdXRvX2N1c3RvbV9oZWFkZXIgPC0gcmVhZC5jc3YoIi9Vc2Vycy9tYWNib29rYXJpZWwvTGlicmFyeS9Nb2JpbGUgRG9jdW1lbnRzL2NvbX5hcHBsZX5DbG91ZERvY3MvQEFSSUVML0FBREQvRGF0YVNjaWVuY2UvRGF0YVNjaWVuY2UtY29uLVJTdHVkaW8vQEFyaWVsL2IgRGF0b3MvdGVtYTEvYXV0by1tcGcuY3N2IiwgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBoZWFkZXIgPSBGLCAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGNvbC5uYW1lcyA9IGMoIm7Dum1lcm8iLCAibWlsbGFzLWdhbMOzbiIsICJjaWxpbmRyYWRhIiwgImRlc3BsYXphbWllbnRvIiwgImNhYmFsbG9zLXBvdGVuY2lhIiwgInBlc28iLCAiYWNlbGVyYWNpw7NuIiwgImHDsW8iLCAibW9kZWxvIikpCmBgYApcCgpWZWFtb3MgY8OzbW8gaGFuIHF1ZWRhZG8gbGFzIGRvcyBwcmltZXJhcyBmaWxhcyAocGFyw6FtZXRybyBfKipoZWFkKipfKToKCmBgYHtyIENhYmVjZXJhIHBlcnNvbmFsaXphZGF9CmhlYWQoYXV0b19jdXN0b21faGVhZGVyLCAyKQpgYGAKXAoKT3RyYSBvcGNpw7NuIGludGVyZXNhbnRlIGFsIGxlZXIgdW4gQ1NWIHRpZW5lIHF1ZSB2ZXIgY29uIGPDs21vIGRlc2lnbmEgbG9zIHZhbG9yZXMgbm8gZGlzcG9uaWJsZXMgKCROQSQpLiAKCkVzIHBvc2libGU6CgoxLiBJbmRpY2FyIGPDs21vIHF1ZXJlbW9zIHF1ZSBzZWFuIHJlbGxlbmFkYXMgbGFzIG9ic2VydmFjaW9uZXMgcXVlIGZhbHRhbiBvIGJpZW4sCjIuIEluZGljYXIgY8OzbW8gZXN0w6FuIGNvZGlmaWNhZG9zIGxvcyB2YWxvcmVzIG5vIGRpc3BvbmlibGVzIGVuIGVsIGRvY3VtZW50byBsZcOtZG8uClwKCkVuIGdlbmVyYWwsIGxvcyB2YWxvcmVzICROQSQgYXBhcmVjZW4gY29uIGVsIHN0cmluZyBOQSwgcGVybyBlcyBwb3NpYmxlIHF1ZSBhbGfDum4gQ1NWIGNvbnRlbmdhIG90cm8gc3RyaW5nIHBhcmEgc2lnbmlmaWNhciB2YWxvcmVzIG5vIGRpc3BvbmlibGVzIChwb3IgZWplbXBsbzogTi9BLCBudWxsLCBuYSwgZXRjLikuIEVuIGVzZSBjYXNvIHNlIHB1ZWRlIGluZGljYXIsIGFsIGFicmlyIGVsIENTViwgY8OzbW8gdmFtb3MgYSBsbGFtYXIgYSBsb3MgTkFzLiBQYXJhIGVsbG8gaGFyZW1vcyB1c28gZGUgbGEgZnVuY2nDs24gXyoqc3RyaW5nLm5hID0gImdyYWbDrWEgY29ycmVzcG9uZGllbnRlIioqXyBvIGJpZW4gXyoqc3RyaW5nLm5hID0gIiIqKl8gKHN0cmluZyB2YWPDrW8pLgpcCgpPdHJhIG9wY2nDs24gcXVlIGRlYmVtb3MgdGVuZXIgZW4gY3VlbnRhIGFsIGFicmlyIHVuIGFyY2hpdm8sIGVzIHF1ZSBSIHN1ZWxlIGNvbnNpZGVyYXIgbG9zIF9zdHJpbmdzXyBjb21vIHNpIGZ1ZXJhbiBmYWN0b3JlcyAodmFyaWFibGVzIGNhdGVnw7NyaWNhcykuIFBhcmEgZXZpdGFyIGVzdGEgY29udmVyc2nDs24gZGlyZWN0YSwgeSB1c2FyIGxvcyBfc3RyaW5nc18gY29tbyBfc3RyaW5nc18gcG9kZW1vcyBhZ3JlZ2FyIGxhIG9wY2nDs24gXyoqc3RyaW5nQXNGYWN0b3JzID0gRkFMU0UqKl8KCkZpbmFsbWVudGUsIHNlIHBvZHLDrWFuIGNhcmdhciBsb3MgZGF0b3MgYSBwYXJ0aXIgZGUgdW5hIHJ1dGEgd2ViLiBQb3IgZWplbXBsbzoKCmBgYHtyIENhcmdhIGRlc2RlIFdFQn0KYXV0b193ZWIgPC0gcmVhZC5jc3YoImh0dHBzOi8vZnJvZ2FtZXMuZXMvY291cnNlLWNvbnRlbnRzL3IvaW50cm8vdGVtYTEvV0hPLmNzdiIpCmBgYAoKKiBWZWFtb3Mgc2kgbGEgY2FyZ2EgZGVzZGUgbGEgd2ViIGhhIGlkbyBiaWVuIGNvbiBlbCBjb21hbmRvIF8qKmhlYWQqKl86CgpgYGB7cn0KaGVhZChhdXRvX3dlYiwgMTApCmBgYApcCgpBZGVtw6FzLCBlc3RlIENTViBkZSBsYSB3ZWIgZGVsIGN1cnNvIHRhbWJpw6luIGNvbnRpZW5lIHZhbG9yZXMgZGUgTkEsIGV0Yy4sIHBhcmEgcmVhbGl6YXIgcHLDoWN0aWNhcyBhbCByZXNwZWN0byBkZSBsYSBjYXJnYSBkZSBDU1ZzLgpcClw=</div>

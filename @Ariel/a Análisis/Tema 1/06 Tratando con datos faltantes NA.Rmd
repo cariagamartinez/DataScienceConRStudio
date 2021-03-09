@@ -35,7 +35,7 @@ Con esta sintaxis hemos transformado a ceros, todos los $NAs$. Sin embargo, es p
 #### b) Limpieza de $NA$ de variables seleccionadas.
 \
 
-Por ejemplo, con una limpieza selectiva por columnas. En el siguiente ejemplo haríamos una extracción selecitva de todos las filas donde no hay $NAs$ dentro de la columna "Income" y nos quedaríamos con todas las columnas. Toda esta extracción la guardamos en una nueva variable que se llamará data.income.cleaned (**COMPARAR ESTA VARIABLE CON LA PROPIA DATA QUE ES LA ORIGINAL**).
+Por ejemplo, con una limpieza selectiva por columnas. En el siguiente ejemplo haríamos una extracción selectiva de todos las filas donde no hay $NAs$ dentro de la columna "Income" y nos quedaríamos con todas las columnas. Toda esta extracción la guardamos en una nueva variable que se llamará data.income.cleaned (**COMPARAR ESTA VARIABLE CON LA PROPIA DATA QUE ES LA ORIGINAL**).
 
 ```{r}
 #Limpiar NAs solamente de la variable INCOME
@@ -71,8 +71,6 @@ mean(data$Income, na.rm = T)
 
 \
 \
-
-
 
 
 

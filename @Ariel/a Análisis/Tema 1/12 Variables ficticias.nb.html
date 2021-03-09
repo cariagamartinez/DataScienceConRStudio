@@ -11,7 +11,7 @@
 
 
 
-<title>Trabajo con datos faltantes</title>
+<title>Variables ficticias / Dummy Variables</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -1766,194 +1766,81 @@ summary {
 
 
 
-<h1 class="title toc-ignore">Trabajo con datos faltantes</h1>
+<h1 class="title toc-ignore">Variables ficticias / Dummy Variables</h1>
 
 </div>
 
 
 <!-- rnb-text-begin -->
-<div id="cómo-trabajar-con-datos-faltantes-missing-data" class="section level3">
-<h3>¿Cómo trabajar con datos faltantes (Missing Data)?</h3>
 <p><br />
 </p>
-<p>Para trabajar con datos faltantes, vamos a usar un CSV en el cual faltan algunas observaciones (<em>missing-data.csv</em>).</p>
-<ul>
-<li>Como siempre, vamos a guardar el CSV en una variable para no tener que acceder constantemente con toda la ruta.</li>
-<li>Si no indicamos nada, los espacios vacíos se leerán como <span class="math inline">\(NAs\)</span>.</li>
-<li>Pero para evitar ambigüedades, vamos a indicarlo específicamente con al argumento <em><strong>na.strings = &quot;&quot;</strong></em>.</li>
-</ul>
+<p>Muchas veces tenemos variables discretas (factores) pero sobre ellas tenemos que computar con modelos que requieren números para funcionar. En estos casos, es necesario utilizar “variables ficticias” cuya única función es asignar un número a esa variable categórica. Para ello, vamos a usar el paquete <em><strong>dummies</strong></em>. En el caso de que no lo tengamos lo instalaremos <em>(instal.packages (“dummies”))</em> y lo cargamos <em>(library(dummies))</em>.<br />
+</p>
+<p>Como siempre, vamos a guardar el dataset en una variable para no tener que recargarla cada vez.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuZGF0YSA8LSByZWFkLmNzdihcXC9Vc2Vycy9tYWNib29rYXJpZWwvTGlicmFyeS9Nb2JpbGUgRG9jdW1lbnRzL2NvbX5hcHBsZX5DbG91ZERvY3MvQEFSSUVML0FBREQvRGF0YVNjaWVuY2UvRGF0YVNjaWVuY2UtY29uLVJTdHVkaW8vQEFyaWVsL2IgRGF0b3MvdGVtYTEvbWlzc2luZy1kYXRhLmNzdlxcLCBuYS5zdHJpbmdzID0gXFxcXClcbmBgYFxuYGBgIn0= -->
-<pre class="r"><code>```r
-data &lt;- read.csv(\/Users/macbookariel/Library/Mobile Documents/com~apple~CloudDocs/@ARIEL/AADD/DataScience/DataScience-con-RStudio/@Ariel/b Datos/tema1/missing-data.csv\, na.strings = \\)</code></pre>
-<pre><code>
-&lt;!-- rnb-source-end --&gt;
-
-&lt;!-- rnb-chunk-end --&gt;
-
-
-&lt;!-- rnb-text-begin --&gt;
-
-\
-
-El siguiente paso sería limpiar el dataframe, es decir, ver qué opciones tenemos para trabajar con los datos no disponibles ($NA$). Tenemos varias opciones.
-\
-\
-
-#### a) Omitir los $NA$
-
-
-&lt;!-- rnb-text-end --&gt;
-
-
-&lt;!-- rnb-chunk-begin --&gt;
-
-
-&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuZGF0YS5jbGVhbmVkIDwtIG5hLm9taXQoZGF0YSlcbmBgYFxuYGBgIn0= --&gt;
-
-```r
-```r
-data.cleaned &lt;- na.omit(data)</code></pre>
-<pre><code>
-&lt;!-- rnb-source-end --&gt;
-
-&lt;!-- rnb-chunk-end --&gt;
-
-
-&lt;!-- rnb-text-begin --&gt;
-
-\
-
-Con esta sintaxis hemos transformado a ceros, todos los $NAs$. Sin embargo, es posible que otras veces querramos otras versiones no tan destructivas.
-\
-\
-
-#### b) Limpieza de $NA$ de variables seleccionadas.
-\
-
-Por ejemplo, con una limpieza selectiva por columnas. En el siguiente ejemplo haríamos una extracción selectiva de todos las filas donde no hay $NAs$ dentro de la columna &quot;Income&quot; y nos quedaríamos con todas las columnas. Toda esta extracción la guardamos en una nueva variable que se llamará data.income.cleaned (**COMPARAR ESTA VARIABLE CON LA PROPIA DATA QUE ES LA ORIGINAL**).
-
-
-&lt;!-- rnb-text-end --&gt;
-
-
-&lt;!-- rnb-chunk-begin --&gt;
-
-
-&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuI0xpbXBpYXIgTkFzIHNvbGFtZW50ZSBkZSBsYSB2YXJpYWJsZSBJTkNPTUVcbmRhdGEuaW5jb21lLmNsZWFuZWQgPC0gZGF0YVshaXMubmEoZGF0YSRJbmNvbWUpLF1cbmBgYFxuYGBgIn0= --&gt;
-
-```r
-```r
-#Limpiar NAs solamente de la variable INCOME
-data.income.cleaned &lt;- data[!is.na(data$Income),]</code></pre>
-<pre><code>
-&lt;!-- rnb-source-end --&gt;
-
-&lt;!-- rnb-chunk-end --&gt;
-
-
-&lt;!-- rnb-text-begin --&gt;
-
-\
-
-Otra operación para obtener el mismo resultado que utilizando _**na.omit**_ es usar la sintaxis _**complete.cases**_. Esta función devuelve un array de datos booleanos y podríamos hacer una extracción selectiva quedándonos con todas la filas que estén completas y con todas las columnas:
-
-
-&lt;!-- rnb-text-end --&gt;
-
-
-&lt;!-- rnb-chunk-begin --&gt;
-
-
-&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuZGF0YS5jbGVhbmVkLjIgPC0gZGF0YVtjb21wbGV0ZS5jYXNlcyhkYXRhKSxdXG5gYGBcbmBgYCJ9 --&gt;
-
-```r
-```r
-data.cleaned.2 &lt;- data[complete.cases(data),]</code></pre>
-<pre><code>
-&lt;!-- rnb-source-end --&gt;
-
-&lt;!-- rnb-chunk-end --&gt;
-
-
-&lt;!-- rnb-text-begin --&gt;
-
-\
-
-En definitiva, es muy similar a otras vías por lo que es común llegar al mismo resultado por distintas vías.
-
-Como dato llamativo en la columna de &quot;Ingresos (Income)&quot; se trata de que hay valores que son cero. Es posible que realmente se refieran a $NAs$ así que podemos reemplazar los ceros con $NA$. La sintaxis es la siguiente:
-
-
-&lt;!-- rnb-text-end --&gt;
-
-
-&lt;!-- rnb-chunk-begin --&gt;
-
-
-&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuI0FjY2VkZW1vcyBhbCB2ZWN0b3IgcXVlIHJlcHJlc2VudGEgbGEgY29sdW1uYSBJbmNvbWUgeSBkZW50cm8gZGVsIHZlY3RvciBhY2NlZGVtb3MgYSBhcXVlbGxvcyB2YWxvcmVzIHF1ZSBzb24gZXhhY3RhbWVudGUgaWd1YWxlcyBhIGNlcm9cbmRhdGEkSW5jb21lW2RhdGEkSW5jb21lID09IDBdIDwtIE5BXG5gYGBcbmBgYCJ9 --&gt;
-
-```r
-```r
-#Accedemos al vector que representa la columna Income y dentro del vector accedemos a aquellos valores que son exactamente iguales a cero
-data$Income[data$Income == 0] &lt;- NA</code></pre>
-<pre><code>
-&lt;!-- rnb-source-end --&gt;
-
-&lt;!-- rnb-chunk-end --&gt;
-
-
-&lt;!-- rnb-text-begin --&gt;
-
-\
-
-Otra opción sería reemplazar los datos con un valor promedio. El problema que tenemos siempre que intentamos usar medidas de centralización en presencia de $NA$, es que el resultado siempre es $NA$. Aunque es una medida de seguridad para hacernos saber que existen datos desconocidos y que podrían falsear el cálculo, algunas veces nos interesa seguir con el cálculo. Para ello, usaremos la función _**na.rm = TRUE**_ (rm = remove). Por ejemplo:
-
-
-&lt;!-- rnb-text-end --&gt;
-
-
-&lt;!-- rnb-chunk-begin --&gt;
-
-
-&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxubWVhbihkYXRhJEluY29tZSlcbmBgYFxuYGBgIn0= --&gt;
-
-```r
-```r
-mean(data$Income)</code></pre>
-<pre><code>
-&lt;!-- rnb-source-end --&gt;
-
-&lt;!-- rnb-output-begin eyJkYXRhIjoiWzFdIE5BXG4ifQ== --&gt;
-</code></pre>
-<p>[1] NA</p>
-<pre><code>
-
-
-&lt;!-- rnb-output-end --&gt;
-
-&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxubWVhbihkYXRhJEluY29tZSwgbmEucm0gPSBUKVxuYGBgXG5gYGAifQ== --&gt;
-
-```r
-```r
-mean(data$Income, na.rm = T)</code></pre>
-<pre><code>
-&lt;!-- rnb-source-end --&gt;
-
-&lt;!-- rnb-output-begin eyJkYXRhIjoiWzFdIDY1NzYzLjY0XG4ifQ== --&gt;
-</code></pre>
-<p>[1] 65763.64 ```</p>
-<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShkdW1taWVzKVxuc3R1ZGVudHMgPC0gcmVhZC5jc3YoXCIvVXNlcnMvbWFjYm9va2FyaWVsL0xpYnJhcnkvTW9iaWxlIERvY3VtZW50cy9jb21+YXBwbGV+Q2xvdWREb2NzL0BBUklFTC9BQUREL0RhdGFTY2llbmNlL0RhdGFTY2llbmNlLWNvbi1SU3R1ZGlvL0BBcmllbC9iIERhdG9zL3RlbWExL2RhdGEtY29udmVyc2lvbi5jc3ZcIilcbmBgYCJ9 -->
+<pre class="r"><code>library(dummies)
+students &lt;- read.csv(&quot;/Users/macbookariel/Library/Mobile Documents/com~apple~CloudDocs/@ARIEL/AADD/DataScience/DataScience-con-RStudio/@Ariel/b Datos/tema1/data-conversion.csv&quot;)</code></pre>
+<!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <p><br />
-<br />
 </p>
+<p>Del dataframe cargado, podemos ver que hay dos variables categóricas: el sexo y el estado. Vamos a modificarlo utilizando la función <em><strong>dummy.data.frame</strong></em>. Esta función requiere el dataframe original y un separador (para el nuevo nombre de la variable).</p>
 <!-- rnb-text-end -->
-</div>
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc3R1ZGVudHMuZHVtbXkgPC0gZHVtbXkuZGF0YS5mcmFtZShzdHVkZW50cywgc2VwID0gXCIuXCIpXG5gYGAifQ== -->
+<pre class="r"><code>students.dummy &lt;- dummy.data.frame(students, sep = &quot;.&quot;)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoibm9uLWxpc3QgY29udHJhc3RzIGFyZ3VtZW50IGlnbm9yZWRub24tbGlzdCBjb250cmFzdHMgYXJndW1lbnQgaWdub3JlZFxuIn0= -->
+<pre><code>non-list contrasts argument ignorednon-list contrasts argument ignored</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuVmlldyAoc3R1ZGVudHMuZHVtbXkpXG5gYGAifQ== -->
+<pre class="r"><code>View (students.dummy)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuVmlldyAoc3R1ZGVudHMuZHVtbXkpXG5gYGAifQ== -->
+<pre class="r"><code>View (students.dummy)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Básicamente, la función ha creado nuevas variables, donde se desplegaron las variables categóricas que ahora tienen un cero para las “no coincidencia” y un uno para las “coincidencias”. Así, la variable categórica “Gender” que antes tenía valores categóricos (“M” y “F”) ahora se ha transformado en <em>Gender.M</em> y <em>Gender.F</em> que para una observación que inicialmente era “M” ahora valdría 1 en <em>Gender.M</em> y 0 en <em>Gender.F</em>.</p>
+<p>Podríamos hacer variables ficticias con una única variable. Por ejemplo:</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZHVtbXkoc3R1ZGVudHMkR2VuZGVyKSAtPiBkdW1teS5nZW5kZXJcbmBgYCJ9 -->
+<pre class="r"><code>dummy(students$Gender) -&gt; dummy.gender</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoibm9uLWxpc3QgY29udHJhc3RzIGFyZ3VtZW50IGlnbm9yZWRcbiJ9 -->
+<pre><code>non-list contrasts argument ignored</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuVmlldyhkdW1teS5nZW5kZXIpXG5gYGAifQ== -->
+<pre class="r"><code>View(dummy.gender)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p><br />
+</p>
+<p>Otra opción, en el caso de dataframes muy grandes, sería buscar la coincidencia de nombre de variable y aplicarle la conversión. En este caso, usamos el argumento <em><em>names</em></em> de la función <em><strong>dummy.data.frame</strong></em> y en formato de vector (<span class="math inline">\(c\)</span>) colocamos el string a buscar. Cuando se genere el nuevo dataframe, las variables ficticias generadas serán exclusivamente las que hayan coincidido con los parámetros de <em><strong>names</strong></em>. Por ejemplo:</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZHVtbXkuc2VhcmNoIDwtIGR1bW15LmRhdGEuZnJhbWUoc3R1ZGVudHMsIG5hbWVzID0gYyhcIlN0YXRlXCIsXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFwiR2VuZ2VyXCIpLFxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBzZXAgPSBcIi5cIilcbmBgYCJ9 -->
+<pre class="r"><code>dummy.search &lt;- dummy.data.frame(students, names = c(&quot;State&quot;,
+                                &quot;Genger&quot;),
+                                sep = &quot;.&quot;)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoibm9uLWxpc3QgY29udHJhc3RzIGFyZ3VtZW50IGlnbm9yZWRcbiJ9 -->
+<pre><code>non-list contrasts argument ignored</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiVHJhYmFqbyBjb24gZGF0b3MgZmFsdGFudGVzIgpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sKLS0tCgojIyMgwr9Dw7NtbyB0cmFiYWphciBjb24gZGF0b3MgZmFsdGFudGVzIChNaXNzaW5nIERhdGEpPwpcCgpQYXJhIHRyYWJhamFyIGNvbiBkYXRvcyBmYWx0YW50ZXMsIHZhbW9zIGEgdXNhciB1biBDU1YgZW4gZWwgY3VhbCBmYWx0YW4gYWxndW5hcyBvYnNlcnZhY2lvbmVzIChfbWlzc2luZy1kYXRhLmNzdl8pLiAKCiogQ29tbyBzaWVtcHJlLCB2YW1vcyBhIGd1YXJkYXIgZWwgQ1NWIGVuIHVuYSB2YXJpYWJsZSBwYXJhIG5vIHRlbmVyIHF1ZSBhY2NlZGVyIGNvbnN0YW50ZW1lbnRlIGNvbiB0b2RhIGxhIHJ1dGEuIAoqIFNpIG5vIGluZGljYW1vcyBuYWRhLCBsb3MgZXNwYWNpb3MgdmFjw61vcyBzZSBsZWVyw6FuIGNvbW8gJE5BcyQuIAoqIFBlcm8gcGFyYSBldml0YXIgYW1iaWfDvGVkYWRlcywgdmFtb3MgYSBpbmRpY2FybG8gZXNwZWPDrWZpY2FtZW50ZSBjb24gYWwgYXJndW1lbnRvIF8qKm5hLnN0cmluZ3MgPSAiIioqXy4KCmBgYHtyfQpkYXRhIDwtIHJlYWQuY3N2KCIvVXNlcnMvbWFjYm9va2FyaWVsL0xpYnJhcnkvTW9iaWxlIERvY3VtZW50cy9jb21+YXBwbGV+Q2xvdWREb2NzL0BBUklFTC9BQUREL0RhdGFTY2llbmNlL0RhdGFTY2llbmNlLWNvbi1SU3R1ZGlvL0BBcmllbC9iIERhdG9zL3RlbWExL21pc3NpbmctZGF0YS5jc3YiLCBuYS5zdHJpbmdzID0gIiIpCmBgYApcCgpFbCBzaWd1aWVudGUgcGFzbyBzZXLDrWEgbGltcGlhciBlbCBkYXRhZnJhbWUsIGVzIGRlY2lyLCB2ZXIgcXXDqSBvcGNpb25lcyB0ZW5lbW9zIHBhcmEgdHJhYmFqYXIgY29uIGxvcyBkYXRvcyBubyBkaXNwb25pYmxlcyAoJE5BJCkuIFRlbmVtb3MgdmFyaWFzIG9wY2lvbmVzLgpcClwKCiMjIyMgYSkgT21pdGlyIGxvcyAkTkEkCgpgYGB7cn0KZGF0YS5jbGVhbmVkIDwtIG5hLm9taXQoZGF0YSkKYGBgClwKCkNvbiBlc3RhIHNpbnRheGlzIGhlbW9zIHRyYW5zZm9ybWFkbyBhIGNlcm9zLCB0b2RvcyBsb3MgJE5BcyQuIFNpbiBlbWJhcmdvLCBlcyBwb3NpYmxlIHF1ZSBvdHJhcyB2ZWNlcyBxdWVycmFtb3Mgb3RyYXMgdmVyc2lvbmVzIG5vIHRhbiBkZXN0cnVjdGl2YXMuClwKXAoKIyMjIyBiKSBMaW1waWV6YSBkZSAkTkEkIGRlIHZhcmlhYmxlcyBzZWxlY2Npb25hZGFzLgpcCgpQb3IgZWplbXBsbywgY29uIHVuYSBsaW1waWV6YSBzZWxlY3RpdmEgcG9yIGNvbHVtbmFzLiBFbiBlbCBzaWd1aWVudGUgZWplbXBsbyBoYXLDrWFtb3MgdW5hIGV4dHJhY2Npw7NuIHNlbGVjdGl2YSBkZSB0b2RvcyBsYXMgZmlsYXMgZG9uZGUgbm8gaGF5ICROQXMkIGRlbnRybyBkZSBsYSBjb2x1bW5hICJJbmNvbWUiIHkgbm9zIHF1ZWRhcsOtYW1vcyBjb24gdG9kYXMgbGFzIGNvbHVtbmFzLiBUb2RhIGVzdGEgZXh0cmFjY2nDs24gbGEgZ3VhcmRhbW9zIGVuIHVuYSBudWV2YSB2YXJpYWJsZSBxdWUgc2UgbGxhbWFyw6EgZGF0YS5pbmNvbWUuY2xlYW5lZCAoKipDT01QQVJBUiBFU1RBIFZBUklBQkxFIENPTiBMQSBQUk9QSUEgREFUQSBRVUUgRVMgTEEgT1JJR0lOQUwqKikuCgpgYGB7cn0KI0xpbXBpYXIgTkFzIHNvbGFtZW50ZSBkZSBsYSB2YXJpYWJsZSBJTkNPTUUKZGF0YS5pbmNvbWUuY2xlYW5lZCA8LSBkYXRhWyFpcy5uYShkYXRhJEluY29tZSksXQpgYGAKXAoKT3RyYSBvcGVyYWNpw7NuIHBhcmEgb2J0ZW5lciBlbCBtaXNtbyByZXN1bHRhZG8gcXVlIHV0aWxpemFuZG8gXyoqbmEub21pdCoqXyBlcyB1c2FyIGxhIHNpbnRheGlzIF8qKmNvbXBsZXRlLmNhc2VzKipfLiBFc3RhIGZ1bmNpw7NuIGRldnVlbHZlIHVuIGFycmF5IGRlIGRhdG9zIGJvb2xlYW5vcyB5IHBvZHLDrWFtb3MgaGFjZXIgdW5hIGV4dHJhY2Npw7NuIHNlbGVjdGl2YSBxdWVkw6FuZG9ub3MgY29uIHRvZGFzIGxhIGZpbGFzIHF1ZSBlc3TDqW4gY29tcGxldGFzIHkgY29uIHRvZGFzIGxhcyBjb2x1bW5hczoKCmBgYHtyfQpkYXRhLmNsZWFuZWQuMiA8LSBkYXRhW2NvbXBsZXRlLmNhc2VzKGRhdGEpLF0KYGBgClwKCkVuIGRlZmluaXRpdmEsIGVzIG11eSBzaW1pbGFyIGEgb3RyYXMgdsOtYXMgcG9yIGxvIHF1ZSBlcyBjb23Dum4gbGxlZ2FyIGFsIG1pc21vIHJlc3VsdGFkbyBwb3IgZGlzdGludGFzIHbDrWFzLgoKQ29tbyBkYXRvIGxsYW1hdGl2byBlbiBsYSBjb2x1bW5hIGRlICJJbmdyZXNvcyAoSW5jb21lKSIgc2UgdHJhdGEgZGUgcXVlIGhheSB2YWxvcmVzIHF1ZSBzb24gY2Vyby4gRXMgcG9zaWJsZSBxdWUgcmVhbG1lbnRlIHNlIHJlZmllcmFuIGEgJE5BcyQgYXPDrSBxdWUgcG9kZW1vcyByZWVtcGxhemFyIGxvcyBjZXJvcyBjb24gJE5BJC4gTGEgc2ludGF4aXMgZXMgbGEgc2lndWllbnRlOgoKYGBge3J9CiNBY2NlZGVtb3MgYWwgdmVjdG9yIHF1ZSByZXByZXNlbnRhIGxhIGNvbHVtbmEgSW5jb21lIHkgZGVudHJvIGRlbCB2ZWN0b3IgYWNjZWRlbW9zIGEgYXF1ZWxsb3MgdmFsb3JlcyBxdWUgc29uIGV4YWN0YW1lbnRlIGlndWFsZXMgYSBjZXJvCmRhdGEkSW5jb21lW2RhdGEkSW5jb21lID09IDBdIDwtIE5BCgojIE9KTyBQT1JRVUUgQ0FNQklBTU9TIEVMIERBVEFGUkFNRSBPUklHSU5BTApgYGAKXAoKT3RyYSBvcGNpw7NuIHNlcsOtYSByZWVtcGxhemFyIGxvcyBkYXRvcyBjb24gdW4gdmFsb3IgcHJvbWVkaW8uIEVsIHByb2JsZW1hIHF1ZSB0ZW5lbW9zIHNpZW1wcmUgcXVlIGludGVudGFtb3MgdXNhciBtZWRpZGFzIGRlIGNlbnRyYWxpemFjacOzbiBlbiBwcmVzZW5jaWEgZGUgJE5BJCwgZXMgcXVlIGVsIHJlc3VsdGFkbyBzaWVtcHJlIGVzICROQSQuIEF1bnF1ZSBlcyB1bmEgbWVkaWRhIGRlIHNlZ3VyaWRhZCBwYXJhIGhhY2Vybm9zIHNhYmVyIHF1ZSBleGlzdGVuIGRhdG9zIGRlc2Nvbm9jaWRvcyB5IHF1ZSBwb2Ryw61hbiBmYWxzZWFyIGVsIGPDoWxjdWxvLCBhbGd1bmFzIHZlY2VzIG5vcyBpbnRlcmVzYSBzZWd1aXIgY29uIGVsIGPDoWxjdWxvLiBQYXJhIGVsbG8sIHVzYXJlbW9zIGxhIGZ1bmNpw7NuIF8qKm5hLnJtID0gVFJVRSoqXyAocm0gPSByZW1vdmUpLiBQb3IgZWplbXBsbzoKCmBgYHtyfQptZWFuKGRhdGEkSW5jb21lKQptZWFuKGRhdGEkSW5jb21lLCBuYS5ybSA9IFQpCmBgYAoKXApcCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgo=</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiVmFyaWFibGVzIGZpY3RpY2lhcyAvIER1bW15IFZhcmlhYmxlcyIKb3V0cHV0OiBodG1sX25vdGVib29rCi0tLQoKXAoKTXVjaGFzIHZlY2VzIHRlbmVtb3MgdmFyaWFibGVzIGRpc2NyZXRhcyAoZmFjdG9yZXMpIHBlcm8gc29icmUgZWxsYXMgdGVuZW1vcyBxdWUgY29tcHV0YXIgY29uIG1vZGVsb3MgcXVlIHJlcXVpZXJlbiBuw7ptZXJvcyBwYXJhIGZ1bmNpb25hci4gRW4gZXN0b3MgY2Fzb3MsIGVzIG5lY2VzYXJpbyB1dGlsaXphciAidmFyaWFibGVzIGZpY3RpY2lhcyIgY3V5YSDDum5pY2EgZnVuY2nDs24gZXMgYXNpZ25hciB1biBuw7ptZXJvIGEgZXNhIHZhcmlhYmxlIGNhdGVnw7NyaWNhLiBQYXJhIGVsbG8sIHZhbW9zIGEgdXNhciBlbCBwYXF1ZXRlIF8qKmR1bW1pZXMqKl8uIEVuIGVsIGNhc28gZGUgcXVlIG5vIGxvIHRlbmdhbW9zIGxvIGluc3RhbGFyZW1vcyBfKGluc3RhbC5wYWNrYWdlcyAoImR1bW1pZXMiKSlfIHkgbG8gY2FyZ2Ftb3MgXyhsaWJyYXJ5KGR1bW1pZXMpKV8uClwKCkNvbW8gc2llbXByZSwgdmFtb3MgYSBndWFyZGFyIGVsIGRhdGFzZXQgZW4gdW5hIHZhcmlhYmxlIHBhcmEgbm8gdGVuZXIgcXVlIHJlY2FyZ2FybGEgY2FkYSB2ZXouCgpgYGB7cn0KbGlicmFyeShkdW1taWVzKQpzdHVkZW50cyA8LSByZWFkLmNzdigiL1VzZXJzL21hY2Jvb2thcmllbC9MaWJyYXJ5L01vYmlsZSBEb2N1bWVudHMvY29tfmFwcGxlfkNsb3VkRG9jcy9AQVJJRUwvQUFERC9EYXRhU2NpZW5jZS9EYXRhU2NpZW5jZS1jb24tUlN0dWRpby9AQXJpZWwvYiBEYXRvcy90ZW1hMS9kYXRhLWNvbnZlcnNpb24uY3N2IikKYGBgClwKCkRlbCBkYXRhZnJhbWUgY2FyZ2FkbywgcG9kZW1vcyB2ZXIgcXVlIGhheSBkb3MgdmFyaWFibGVzIGNhdGVnw7NyaWNhczogZWwgc2V4byB5IGVsIGVzdGFkby4gVmFtb3MgYSBtb2RpZmljYXJsbyB1dGlsaXphbmRvIGxhIGZ1bmNpw7NuIF8qKmR1bW15LmRhdGEuZnJhbWUqKl8uIEVzdGEgZnVuY2nDs24gcmVxdWllcmUgZWwgZGF0YWZyYW1lIG9yaWdpbmFsIHkgdW4gc2VwYXJhZG9yIChwYXJhIGVsIG51ZXZvIG5vbWJyZSBkZSBsYSB2YXJpYWJsZSkuCgpgYGB7cn0Kc3R1ZGVudHMuZHVtbXkgPC0gZHVtbXkuZGF0YS5mcmFtZShzdHVkZW50cywgc2VwID0gIi4iKQpgYGAKCmBgYHtyfQpWaWV3IChzdHVkZW50cy5kdW1teSkKYGBgCgoKQsOhc2ljYW1lbnRlLCBsYSBmdW5jacOzbiBoYSBjcmVhZG8gbnVldmFzIHZhcmlhYmxlcywgZG9uZGUgc2UgZGVzcGxlZ2Fyb24gbGFzIHZhcmlhYmxlcyBjYXRlZ8OzcmljYXMgcXVlIGFob3JhIHRpZW5lbiB1biBjZXJvIHBhcmEgbGFzICJubyBjb2luY2lkZW5jaWEiIHkgdW4gdW5vIHBhcmEgbGFzICJjb2luY2lkZW5jaWFzIi4gQXPDrSwgbGEgdmFyaWFibGUgY2F0ZWfDs3JpY2EgIkdlbmRlciIgcXVlIGFudGVzIHRlbsOtYSB2YWxvcmVzIGNhdGVnw7NyaWNvcyAoIk0iIHkgIkYiKSBhaG9yYSBzZSBoYSB0cmFuc2Zvcm1hZG8gZW4gX0dlbmRlci5NXyB5IF9HZW5kZXIuRl8gcXVlIHBhcmEgdW5hIG9ic2VydmFjacOzbiBxdWUgaW5pY2lhbG1lbnRlIGVyYSAiTSIgYWhvcmEgdmFsZHLDrWEgMSBlbiBfR2VuZGVyLk1fIHkgMCBlbiBfR2VuZGVyLkZfLgoKUG9kcsOtYW1vcyBoYWNlciB2YXJpYWJsZXMgZmljdGljaWFzIGNvbiB1bmEgw7puaWNhIHZhcmlhYmxlLiBQb3IgZWplbXBsbzoKCmBgYHtyfQpkdW1teShzdHVkZW50cyRHZW5kZXIpIC0+IGR1bW15LmdlbmRlcgpWaWV3KGR1bW15LmdlbmRlcikKYGBgClwKCk90cmEgb3BjacOzbiwgZW4gZWwgY2FzbyBkZSBkYXRhZnJhbWVzIG11eSBncmFuZGVzLCBzZXLDrWEgYnVzY2FyIGxhIGNvaW5jaWRlbmNpYSBkZSBub21icmUgZGUgdmFyaWFibGUgeSBhcGxpY2FybGUgbGEgY29udmVyc2nDs24uIEVuIGVzdGUgY2FzbywgdXNhbW9zIGVsIGFyZ3VtZW50byBfKm5hbWVzKl8gZGUgbGEgZnVuY2nDs24gXyoqZHVtbXkuZGF0YS5mcmFtZSoqXyB5IGVuIGZvcm1hdG8gZGUgdmVjdG9yICgkYyQpIGNvbG9jYW1vcyBlbCBzdHJpbmcgYSBidXNjYXIuIEN1YW5kbyBzZSBnZW5lcmUgZWwgbnVldm8gZGF0YWZyYW1lLCBsYXMgdmFyaWFibGVzIGZpY3RpY2lhcyBnZW5lcmFkYXMgc2Vyw6FuIGV4Y2x1c2l2YW1lbnRlIGxhcyBxdWUgaGF5YW4gY29pbmNpZGlkbyBjb24gbG9zIHBhcsOhbWV0cm9zIGRlIF8qKm5hbWVzKipfLiBQb3IgZWplbXBsbzoKCmBgYHtyfQpkdW1teS5zZWFyY2ggPC0gZHVtbXkuZGF0YS5mcmFtZShzdHVkZW50cywgbmFtZXMgPSBjKCJTdGF0ZSIsCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIkdlbmdlciIpLAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHNlcCA9ICIuIikKYGBgCgoKCgoKCgoKCgoKCgoKCgoK</div>
 
 
 
@@ -2000,7 +1887,7 @@ $(document).ready(function () {
 <!-- code folding -->
 <script>
 $(document).ready(function () {
-  window.initializeSourceEmbed("06 Tratando con datos faltantes NA.Rmd");
+  window.initializeSourceEmbed("12 Variables ficticias.Rmd");
   window.initializeCodeFolding("show" === "show");
 });
 </script>
