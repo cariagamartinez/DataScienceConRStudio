@@ -1,0 +1,76 @@
+---
+title: "Matrices de confusión"
+output: html_notebook
+---
+\
+
+Vamos a comezar con los procesos de clasificación, es decir, tenemos observaciones y queremos "guardarlas en ciertas cajas". La idea es generar un modelo para saber en qué "caja" puede ir cada una. 
+\
+
+Por lo anterior, es necesario saber de qué forma los datos obtenidos por el modelo se ajustan a los datos reales. El primer paso es generar una matriz de confusión que permitirá **comparar lo que predice un modelo versus los datos en la realidad**. Como siempre, vamos a cargar nuestros datos **y a guardarlos en una variable**. 
+El dataset consta de 4000 entradas sobre calificaciones de alumnos y tiene dos columnas finales de interés para este tema. Por un lado, está la calificación final obtenida realmente por el alumno y por otra parte la calificación predicha por algún modelo (no sabemos cuál, pero por ahora da igual).
+
+Tras guardar el dataset en una variable, vamos a ordenar las dos columnas ya que son factores que tienen un orden específico.
+
+```{r}
+cp <- read.csv("/Users/Ariel/Library/Mobile Documents/com~apple~CloudDocs/AADD/DataScience-con-RStudio/Datos/tema3/college-perf.csv")
+cp$Perf <- ordered (cp$Perf,
+                    levels = c("Low", "Medium", "High"))
+cp$Pred <- ordered (cp$Pred,
+                    levels = c("Low", "Medium", "High"))
+```
+\
+
+Una vez ordenados los datos, vamos a crear una tabla de doble entrada (el argumento **dnn* se refiere a los nombres de las columnas)
+
+```{r}
+table.conf <- table (cp$Perf, cp$Pred,
+                     dnn = c("Real", "Predicho"))
+table.conf
+
+```
+\
+
+La tabla anterior se denomina **Matriz de confusión** y lo que nos indica es que el modelo es capaz de predecir, por ejemplo, 1150 casos correctamente cuando la nota es "Low", aunque tiene algunos errores (como 84 predicciones "Medium" o 98 predicciones "High").
+Por otra parte, podríamos pedir que la tabla nos muestre los porcentajes, con la función **prop.table**.
+
+```{r}
+prop.table(table.conf)
+```
+\
+
+Como podemos ver, la tabla nos da las proporciones, pero no están ajustadas al 100% por filas, sino en total, por lo que podríamos usar nuevamente la función **prop.table** de la tabla generada, con un parámetro **1** que indica que se organice por filas (es decir, la suma de los valores de las filas será 100%. En caso de que queramos hacerlo por columnas, simplemente cambiamos este parámetro a **2**). Como los valores de proporción son dificiles de ver, vamos a multiplicar por 100 y redondear con 2 dígitos. Nos quedaría así:
+
+```{r}
+round (prop.table(table.conf, 1)*100, 2)
+```
+\
+
+Podríamos hacer un gráfico.
+
+```{r}
+barplot(table.conf, legend = T)
+```
+\
+
+#### Gráfico de mosaico
+\
+
+En un gráfico de mosaico, se ubican todas las porciones en un único cuadro.
+
+```{r}
+mosaicplot(table.conf, main = "Eficiencia del modelo", cex = 0.5, rainbow(3), col = rainbow(3))
+
+```
+\
+
+Con la función **summary** podríamos ver algunos parámetros de la matriz de confusión generada. Entre ellos, el test de independencia con una Chi Cuadrado. Como vemos, el valor p es muy bajo por lo que hay independencia de las observaciones y entonces el modelo es bastante efectivo en la predicción que realiza.
+
+
+```{r}
+summary (table.conf)
+```
+
+
+
+

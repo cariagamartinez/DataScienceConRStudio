@@ -1,0 +1,70 @@
+---
+title: "Lattice"
+output: html_notebook
+---
+\
+
+Vamos a comenzar a trabajar con el paquete **lattice**. Como siempre, vamos a cargar el dataset en una variable. Vamos a indicar que los _strings_ no los tome como factores (de esa forma los nombres de los coches no son considerados factores). Por otra parte, vamos a generar una variable categórica (no todas/cualquiera -que sería sin la sentencia _stringAsFactor_, sino la que nosotros decidimos) que en este caso será _cylinders_. Finalmente, cargamos la librería en caso de que no esté en uso aún:
+
+```{r}
+auto <-read.csv("/Users/Ariel/Library/Mobile Documents/com~apple~CloudDocs/AADD/DataScience-con-RStudio/Datos/tema2/auto-mpg.csv", stringsAsFactors = F)
+auto$cylinders = factor(auto$cylinders,
+                        levels = c(3,4,5,6,8),
+                        labels = c ("3C", "4C", "5C", "6C", "8C"))
+library(lattice)
+```
+
+#### Boxplot
+
+Cambia ligeramente la sintaxis de generación del gráfico, en tanto que el resto de indicaciones sobre parámetros gráficos sigue siendo bastante parecida (títulos, leyendas, etc.).
+
+```{r}
+bwplot (~auto$mpg | auto$cylinders,
+        main = "MPG según cilindrada",
+        xlab = "Millas por galón",
+        layout = c(2,3), aspect = 0.4)
+```
+\
+
+#### Scatterplot 
+\
+
+```{r}
+xyplot(mpg~weight | cylinders, data = auto,
+       main = "Peso vs consumo vs cilindrada",
+       xlab = "Peso",
+       ylab = "Consumo")
+```
+\
+
+Como vemos, de la sintaxis podemos indicar algunos elementos:
+
+* El paquete **lattice** está especializado en facilitar la segmentación de los gráficos.
+* Siempre se coloca al empezar el tipo de gráfico a representar.
+* Luego viene la variable (para gráficos de una sola variable como una boxplot) y/o fórmula (cuando hay más de una variable). El símbolo ~  separa ambas variables (y~x).
+* Luego agregamos una barra vertical y la variable que usaremos para segmentar el gráfico.
+* Para evitar indicar tantas veces el _$posición_ podemos hacer uso del parámetro _data_.
+* Finalmente, agregamos el resto de leyendas, etc.
+
+Como apuntes finales:
+* La distribución de los gráficos en filas y columnas se hace con el parámetro **layout** y la relación de aspecto se hace con **aspect**.
+* Los colores no se modifican de a uno, sino que se modifican los esquemas de color y se utiliza la función **trellis.par.set (theme = (tema))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

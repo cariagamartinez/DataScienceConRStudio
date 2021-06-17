@@ -1,0 +1,98 @@
+---
+title: "Comparaciones gráficas"
+output: html_notebook
+---
+\
+
+Vamos a cargar el último dataset:
+
+```{r}
+data <- read.csv("/Users/Ariel/Library/Mobile Documents/com~apple~CloudDocs/AADD/DataScience-con-RStudio/Datos/tema2/daily-bike-rentals.csv")
+```
+\
+
+Vamos a modificar ligeramente el dataset para comprenderlo mejor:
+
+
+```{r}
+data$season <- factor (data$season, levels = c(1,2,3,4),
+                       labels = c("Invierno", "Primavera", "Verano", "Otoño"))
+data$workingday <- factor (data$workingday, levels = c(0,1),
+                           labels = c("Festivo", "Laborable"))
+data$weathersit <- factor (data$weathersit, levels = c (1,2,3),
+                           labels = c("Despejado", "Nublado","Lluvia/Nieve ligera"))
+attach(data)
+```
+
+\
+
+Hacemos el **attach** para que se quede "ligado" al espacio y no tengamos que indicar constamente de dónde proceden los datos. Luego haremos un subconjunto para cada estación y nos quedaremos con la columna _count_. Para poder graficar 4 gráficos, vamos a modificar la presentación, usando 2 columnas y 2 filas.
+
+```{r}
+par(mfrow = c(2,2))
+
+winter <- subset(data, season == "Invierno")$cnt
+spring <- subset(data, season == "Primavera")$cnt
+summer <- subset(data, season == "Verano")$cnt
+fall <- subset(data, season == "Otoño")$cnt
+```
+\
+
+Ya tenemos los subconjuntos, así que ahora generaremos los 4 histogramas con sus curvas de densidad. Además, vamos a colocar una línea roja para la media y una azul para la mediana.
+
+```{r}
+par (mfrow = c(2,2))
+
+hist(winter, prob=T)
+lines (density(winter))
+abline (v = mean (winter), col ="red")
+abline (v = median(winter), col = "blue")
+
+hist(spring, prob=T)
+lines (density(spring))
+abline (v = mean (spring), col ="red")
+abline (v = median(spring), col = "blue")
+
+hist(summer, prob=T)
+lines (density(summer))
+abline (v = mean (summer), col ="red")
+abline (v = median(summer), col = "blue")
+
+hist(fall, prob=T)
+lines (density(fall))
+abline (v = mean (fall), col ="red")
+abline (v = median(fall), col = "blue")
+```
+\
+
+#### Diagrama de judías
+
+\
+
+Vamos a usar el paquete **beanplots**. Necesitamos indicar qué vamos a graficara y en función de qué. Este gráfico represntará tanto la frecuencia como la función de densidad. En este caso, veremos la función de densidad de color azul. De color rojo se indicará la frecuencia de ocurrencia de cada valor, en verde se indicará aquellos valores que aparecen, pero se salen de la función de densidad (recordemos que la función de densidad es insensible a las frecuencias).
+
+```{r}
+library(beanplot)
+beanplot(data$cnt~ data$season, col = c("blue", "red", "green"))
+```
+\
+
+#### Analizando causalidad
+\
+
+```{r}
+library(lattice)
+bwplot(cnt~weathersit, 
+       data = data, 
+       layout = c(1,1),
+       xlab = "Pronóstico del tiempo",
+       ylab = "Frecuencias",
+       panel = function(x,y,...){
+         panel.bwplot(x,y,...)
+         panel.stripplot(x,y,jitter.data = T,...)
+         },
+       par.settings = list (box.rectangle = list(fill = c("red", "blue", "green"))))
+```
+
+
+

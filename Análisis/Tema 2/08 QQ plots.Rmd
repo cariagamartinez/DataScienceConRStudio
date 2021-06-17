@@ -1,0 +1,57 @@
+---
+title: "Gráficos Q-Q"
+output: html_notebook
+---
+\
+
+La idea de los gráficos Q-Q es ver si una muestra sigue una distribución normal y para ello conoceremos la función **qnorm**. Primero vamos a crear una secuencia de números, que empiece en 0,01 y llegue a 0,99, subiendo de 0,01 en 0,01. Esta secuencia nos servirá también como percentiles.
+
+Posteriormente, aplicaremos la función **qnorm**, cuyo argumento principal es un vector de cuantiles/percentiles (es decir, la secuencia anterior). Finalmente, guardaremos los datos en un dataframe con dos columnas, dadas por los percentiles y su probabilidad asociada.
+
+```{r}
+s <- seq(0.01, 0.99, 0.01)
+qn <- qnorm (s)
+
+df <- data.frame (p=s, q=qn)
+```
+\
+
+Ahora, vamos a sacar una muestra _random_ haciendo uso de la función **rnorm**. Con la función **quantile** podemos calcular cada percentil y los valores que les corresponde
+
+```{r}
+sp <- rnorm(200)
+sp
+quantile (sp, probs = s)
+```
+
+\
+
+Para crear gráficos usaremos **qqnorm* y **qqplot**. Veamos el uso de **qqnorm** (que hace un plot frente a una distribución teórica normal), usando el dataset _trees_ (árboles) que viene en R y que tiene algunos valores. Nos preguntamos si la altura de los árboles (medida en este dataset) sigue una distribución normal. Para ello:
+
+```{r}
+qqnorm(trees$Height)
+```
+\
+
+La
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

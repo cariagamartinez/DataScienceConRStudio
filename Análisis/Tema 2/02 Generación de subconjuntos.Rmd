@@ -1,0 +1,130 @@
+---
+title: "Extracción de subconjuntos de datos"
+output: html_notebook
+---
+
+##### Subconjuntos
+\
+
+Muchas veces no necesitamos trabajar con absolutmente todos los datos por lo que nos interesaría trabajar con ciertos subgrupos que extraeríamos del grupo principal (RAW). 
+Como siempre, **empezamos por cargar los datos en una variable (_data_)**.
+
+
+```{r}
+data <- read.csv("/Users/Ariel/Library/Mobile Documents/com~apple~CloudDocs/AADD/DataScience-con-RStudio/Datos/tema2/auto-mpg.csv", header = T, stringsAsFactors = F)
+```
+\
+
+
+##### Extracción por posición
+\
+
+Accediendo con corchetes a cada posición podríamos ir haciendo extracciones de lo que nos vaya interesando:
+
+```{r}
+data.1 <- data [1:5, 8:9] #Acceder a las filas de la 1 a la 5 y luego la columnas de la 8 a la 9
+data.2 <- data[1:5, c(8,9)]
+```
+\
+
+##### Extracción por nombre
+
+```{r}
+data.3 <- data[1:5, c("model_year", "car_name")]
+```
+\
+
+##### Extracción por condición
+\
+En este caso, queremos obtener subconjuntos, accediendo a las posiciones según condiciones específicas. En el siguiente caso queremos quedarnos con los valores en los que se obtengan el mínimo o (| Alt+1) el máximo, para una determinada columna (_mpg_).
+
+```{r}
+#Acceder a mínimos y máximos: observar que "o" = |
+
+data.4 <- data[data$mpg == max(data$mpg) | data$mpg == min(data$mpg), ]
+
+```
+\
+
+Otra opción sería colocar más condiciones: por ejemplo, buscamos un coche cuyo gasto de millas por galón sea mayor a 30 y que tenga exclusivamente 6 cilindros. De todos ellos, solo nos interesaría saber el nombre y el gasto, por lo que la sentencia sería:
+
+```{r}
+data.5 <- data[data$mpg>30 & data$cylinders == 6, c("car_name", "mpg")]
+```
+\
+
+#### Uso de la función **subset**
+\
+
+La función **subset** hace subconjuntos de una forma más sencilla que con los accesos por posición. La función requiere: el dataframe, las condiciones y con el parámetro **select** podemos indicar las columnas.
+
+```{r}
+data.6 <- subset(data, mpg>30 & cylinders == 6, select = c("car_name", "mpg"))
+```
+\
+
+#### Otras indicaciones
+
+La sintaxis puede utilizarse para excluir valores numéricos pero no para excluir _strings_. Si queremos hacerlo con nombres de columnas tendremos que usar la sintaxis _%in%_.
+
+```{r}
+data[1:5, c(-1, -9)] #Las filas de la 1 a la 5 y todas las columnas excepto la 1 y la 9.
+data[1:5, -c(1,9)] #Igual que el anterior: en este caso se excluye el conjunto formado por 1 y 9.
+#Si queremos excluir por nombre de columnas, entonces
+
+data[1:5, !names(data) %in% c("No", "car_name")] -> data.7
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

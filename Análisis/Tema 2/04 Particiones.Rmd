@@ -1,0 +1,132 @@
+---
+title: "Particiones"
+output: html_notebook
+---
+\
+
+#### Particiones usando variables numéricas
+\
+
+Como primer paso vamos a instalar el paquete **caret** (install.package("caret")) y luego lo vamos a cargar en memoria (library (caret)).
+Como datos, vamos a usar el dataset de las casas de Boston, como siempre guardadas en una varible.
+
+```{r}
+library(caret)
+
+  data <- read.csv("/Users/Ariel/Library/Mobile Documents/com~apple~CloudDocs/AADD/DataScience-con-RStudio/Datos/tema2/BostonHousing.csv")
+```
+\
+
+Se cargarán 506 observaciones de 14 variables. Ahora vamos a crear una partición con un 80% de los casos para generar un modelo y un 20% para poner a prueba el modelo.
+
+Para ello, vamos a usar la función **createDataPartition** del paquete **caret**. Esta función requiere los datos, el porcentaje y si queremos que los resultados se guarden como lista (T) o como matriz (F). 
+
+El primer paso es generar un conjunto de índices/identificadores aleatorios que indique cuáles serían las observaciones seleccionadas. Este paso es solo "ir sacando el número de la posición" de forma aleatoria (de entre las 506 observaciones) para ver qué observación se escogería. Lo guardamos en la variable _training.ids_.
+
+```{r}
+training.ids <- createDataPartition(data$MEDV, p= 0.8, list = F)
+```
+\
+
+El resultado es una lista de 407 observaciones (aproximadamente el 80% de las observaciones totales). Este paso es solo un muestreo aleatorio que recoge un índice/número de posición. Ahora tendremos que entrar a los datos y recuperar toda la información que corresponda al índice muestreado.
+
+Una vez que estén generados los índices de posición, vamos a acceder a las observaciones correspondientes y a guardarlos en una variable. Para ello, creamos una variable (_data.training_) y le asignamos del dataset _data_ todas las filas que coinciden con la posición que tiene guardada _training.ids_ y todas las columnas (coma al final).
+Para el 20% restante, le asignaremos todos lo que no estén contenidos en _training.ids_ (por eso va el signo menos delante).
+
+```{r}
+data.training <- data[training.ids,]
+data.validation <- data [-training.ids,]
+```
+\
+
+En el caso de que necesitemos más particiones (por ejemplo 3), podemos hacer un paso intermedio:
+
+```{r}
+training.ids.2 <- createDataPartition(data$MEDV, p =0.7, list = F)
+data.training.2 <- data[training.ids.2,]
+temp <- data[training.ids.2,]
+validation.ids.2 <- createDataPartition(temp$MEDV, p = 0.5, list = F)
+data.validation.2 <- temp[validation.ids.2,]
+data.testing.2 <- temp[-validation.ids.2,]
+```
+\
+
+#### Particiones con variables categóricas
+\
+
+Vamos a cargar el csv variante del anterior, donde tenemos una columna con categorías. Como vamos a hacer uso de las variables categóricas, no vamos a usar el_stringAsFactors  =F_.
+Haremos una partición de datos con referencia a dicha columna categórica.
+\
+```{r}
+ data2 <- read.csv("/Users/Ariel/Library/Mobile Documents/com~apple~CloudDocs/AADD/DataScience-con-RStudio/Datos/tema2/boston-housing-classification.csv")
+
+training.ids.3 <- createDataPartition(data2$MEDV_CAT, p = 0.7 , list = F)
+data2.training.3 <- data2[training.ids.3,]
+data2.validation.3 <- data2[-training.ids.3,]
+```
+\
+
+#### Funciones para obtener particiones
+\
+
+Aunque todo lo anterior es sencillo de hacer por programación, podríamos crear una función para automatizarlo:
+
+```{r}
+rda.cb.partition2 <- function(dataframe, target.index, prob) {
+  library(caret)
+  training.ids <- createDataPartition(dataframe[,target.index], p=prob, list=F)
+  list(train = dataframe[training.ids,], val=dataframe[-training.ids,])
+}
+```
+\
+
+**¿Qué siginifica la función?**
+\
+
+* Vamos a crearla dándole el nombre _rda.cb.partition2_ usando la palabra restringida _function_.
+* Esta función tomará tres parámetros: el dataset (_dataframe_), el número de la columna que queremos usar como referencia para realizar la partición (_target.index_) y el porcentaje que corresponderá a la partición (_prob_).
+* En la propia función, indicaremos que se cargue la librería necesaria (**caret**).
+* Vamos a crear una variable dónde se guardarán los índices obtenidos con la función **createDataPartition** del paquete **caret**. La partición se creará tomando el dataframe original, accediendo a todas las filas pero solo a las columnas indicadas según _target.index_, con un porcentaje indicado por _prob_.
+* Finalmente, pedimos a la función que devuelva una lista que contenga las dos particiones. Por un lado, una partición que se llama _train_, que contiene todo las filas que corresponden con la selección realizada por _training.ids_ y todas las columnas (**NOTAR LA COMA FINAL, QUE INDICA QUE SE RECOGEN TODAS LAS COLUMNAS**) y por otra parte, otra lista llamada _val_, que contendrá las observaciones complementarias (dadas por _-training.ids_) Y TODAS LAS COLUMNAS (COMA FINAL).
+\
+
+La función anterior se podría generalizar para realizar 3 particiones, utilizando una variable temporal (_temp_), como veremos en la siguiente función:
+
+```{r}
+rda.cb.partition3 <- function(dataframe, target.index, prob.train, prob.val) {
+  library(caret)
+  training.ids <- createDataPartition(dataframe[,target.index], p=prob.train, list=F)
+  train.data <- dataframe[training.ids,]
+  temp <- dataframe[-training.ids,]
+  validation.ids <- createDataPartition(temp[, target.index], p=prob.val, list=F)
+  list(train = train.data, val=temp[validation.ids,], test = temp[-validation.ids,])
+}
+```
+\
+
+La principal diferencia con la función anterior es que ahora tendremos que indicar un porcentaje para generar los dos grupos a partir de la variable temporal. Veremos ésto en su aplicació
+
+Ahora, aplicaremos la función **rda.cb.partition2** que tiene como parámetros el nombre del dataframe sobre el que haremos la división (_data2_), el número/índice de la columna que usaremos para realizar la partición (en este caso es la columna número 14) y el porcentaje para el el primer subconjunto (en este caso 80%):
+
+```{r}
+Dos.particiones <- rda.cb.partition2 (data2, 14, 0.8)
+```
+\
+El resultado será una lista de dos dataframes.
+
+\ 
+Aplicamos la función generalizada, sobre el dataframe original (_data2_), usando la columna número 14 como referencia y obtendremos un primer grupo con el 70% de las observaciones y luego el 30% de las restantes se dividirán a su vez en dos grupos (cada uno de los cuales contendrá el 50% de esas 30% sobrantes de la primera división)
+
+
+```{r}
+data3 <- rda.cb.partition3 (data2, 14, 0.7, 0.5)
+data.valid <- data2particiones$train
+```
+\
+
+Finalmente, podemos usar la función **sample** para obtener una muestra aleatoria de un dataframe:
+
+```{r}
+sample1 <- sample(data2$CRIM, 40, replace = F)
+```
+

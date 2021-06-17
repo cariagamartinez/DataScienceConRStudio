@@ -1,0 +1,144 @@
+---
+title: "Trabajo con datos faltantes"
+output: html_notebook
+---
+\
+
+#### ¿Cómo trabajar con datos faltantes (_Missing Data_)?
+\
+
+Para trabajar con datos faltantes, vamos a usar un CSV en el cual faltan algunas observaciones (_missing-data.csv_). 
+
+* Como siempre, vamos a guardar el CSV en una variable para no tener que acceder constantemente con toda la ruta. 
+* Si no indicamos nada, los espacios vacíos se leerán como $NAs$. 
+* Pero para evitar ambigüedades, vamos a indicarlo específicamente con al argumento _**na.strings = ""**_.
+
+```{r}
+data <- read.csv("/Users/Ariel/Library/Mobile Documents/com~apple~CloudDocs/AADD/DataScience-con-RStudio/Datos/tema1/missing-data.csv", na.strings = "")
+```
+\
+
+El dataframe cargado tiene varios valores $NA$, en concreto 4, que están distribuidos en dos columnas. Por ello, el siguiente paso sería limpiar el dataframe, es decir, ver qué opciones tenemos para trabajar con los datos no disponibles ($NA$). Tenemos varias opciones.
+\
+\
+
+##### a) Eliminar por completo las observaciones que contengan $NA$
+
+```{r}
+data.cleaned <- na.omit(data)
+```
+\
+
+Utilizando la función **na.omit**, hemos eliminado todos los $NAs$ **pero no solo el valor $NA$ sino toda la observación**, así que ahora tenemos 23 observaciones completas, habiéndose eliminado 4 observaciones. **TENEMOS QUE TENER EN CUENTA QUE SE ELIMINAN TODOS LOS VALORES $NA$ ASÍ COMO LOS VALORES DE OTRAS COLUMNAS QUE NO SON $NAs$**. Esta sería la función  **más destructiva**.
+\
+\
+
+##### b) Limpieza de $NA$ de variables seleccionadas.
+
+Como la versión anterior conduce a la destrucción por completo de los datos, es posible que solo queramos eliminar los $NAs$ de una columna en concreto. En el siguiente ejemplo, haríamos una extracción selectiva de todos las filas donde **no (!)** hay $NAs$ únicamente dentro de la columna _Income_ y no tocaríamos los datos del resto de columnas. Toda esta extracción la guardamos en una nueva variable que se llamará data.income.cleaned (**COMPARAR ESTA VARIABLE CON LA PROPIA DATA QUE ES LA ORIGINAL**). 
+
+```{r}
+#Limpiar NAs solamente de la variable INCOME
+data.income.cleaned <- data[!is.na(data$Income),]
+```
+\
+
+Sin embargo, hay que tener en cuenta que **se sigue borrando toda la observación**, es decir, se borra toda la fila. En este caso, como la columna _Income_ tenía 2 $NAs$ el resultado es que del dataframe original de 27 observaciones, ahora tenemos 25.
+
+Otra operación para obtener el mismo resultado que utilizando _**na.omit**_ es usar la sintaxis _**complete.cases**_. Esta función devuelve un array de datos booleanos y podríamos hacer una extracción selectiva quedándonos con todas la filas que estén completas y con todas las columnas:
+
+```{r}
+data.cleaned.2 <- data[complete.cases(data),]
+```
+\
+
+En definitiva, es muy similar a otras vías por lo que es común llegar al mismo resultado por distintas vías.
+
+Como dato llamativo en la columna de "Ingresos (Income)" se trata de que hay valores que son cero. Es posible que realmente se refieran a $NAs$ así que podemos reemplazar los ceros con $NA$. La sintaxis es la siguiente:
+
+```{r}
+#Accedemos a la posición columna Income dentro del dataframe data (data$Income) y ponemos como condición que a aquellos valores que son exactamente iguales a cero dentro de esta columna, se les asigne el string NA
+
+data$Income[data$Income == 0] <- NA
+
+# OJO PORQUE CAMBIAMOS EL DATAFRAME ORIGINAL
+```
+\
+
+
+##### c) Reemplazo o eliminación para continuar con el cálculo.
+\
+
+Otra opción sería reemplazar los datos con un valor promedio. El problema que tenemos siempre que intentamos usar medidas de centralización en presencia de $NA$, es que el resultado siempre es $NA$. Por ejemplo, si calculamos la media de la columna _Income_ en presencia de $NAs$ el resultado será $NA$. Aunque es una medida de seguridad para hacernos saber que existen datos desconocidos y que podrían falsear el cálculo, algunas veces nos interesa seguir con el cálculo. Para ello, usaremos la función **na.rm = TRUE** (rm = remove). Por ejemplo:
+
+```{r}
+mean(data$Income)
+mean(data$Income, na.rm = T)
+```
+\
+
+En el siguiente apartado lo veremos con mayor detalle.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

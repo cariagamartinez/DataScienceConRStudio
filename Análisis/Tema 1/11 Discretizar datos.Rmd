@@ -1,0 +1,79 @@
+---
+title: "Discretización de datos / Conversión de variables"
+output:
+  html_notebook: default
+  html_document:
+    df_print: paged
+  pdf_document: default
+---
+\
+
+<div style="text-align: justify"> El proceso de discretizar datos (_binning_) se refiere a las distintas transformaciones que se pueden realizar a las variables cuantitativas para obtener variables CUALITATIVAS (DISCRETAS), es decir, que admitan valores numéricos no continuos o nominales/ordinales.
+Como siempre, vamos a cargar el fichero de uso y a guardarlo en una variable para tener acceso a él. </div>
+
+```{r}
+students_binning <- read.csv("/Users/Ariel/Library/Mobile Documents/com~apple~CloudDocs/AADD/DataScience-con-RStudio/Datos/tema1/data-conversion.csv")
+```
+\
+
+<div style = "text-align: justify"> En este CSV, podríamos modificar, por ejemplo, una variable cuantitativa como _Income_ y transformarla en categórica, estableciendo "puntos de corte" a partir del cual la vabialbe podría ser "alta", "promedio" o "baja" (categorías).  Para ello, vamos a usar la función **cut**.
+\
+
+Primero, vamos a crear un vector con los puntos de quiebre de cada categoría (lo guardamos en una variable llamada _bp_) y luego vamos a indicar los nombres de cada categoría (que guardamos en una variable que llamaremos _name_). Finalmente, crearemos una nueva columna que almacenará las nuevas categorías (que llamaremos _students$Income.cat_) **(RECORDAMOS QUE SI ACCEDEMOS CON LA SINTAXIS DEL DÓLAR A UNA POSICIÓN "QUE NO EXISTE" ENTONCES ESTA SE CREARÁ)**. </div>
+\
+
+Entonces, la función **cut** requiere:
+
+* La columna original a "cortar" en categorías.
+* Los puntos de corte (que hemos guardado en la variable _bp_) y que se indicarán en el argumento **breaks** de la función **cut**).
+* Los nombres de las nuevas categorías (que se indicarán en el parámetro **labels**).
+
+```{r}
+bp <- c(-Inf, 10000, 31000, Inf)
+name <- c("Low", "Average", "High")
+
+students_binning$Income.cat <- cut(students_binning$Income,
+                                   breaks = bp, 
+                                   labels = name)
+
+View (students_binning)
+```
+\
+
+> Siempre tenemos 1 punto más de breakpoint con respecto a las etiquetas (hay una etiqueta menos que puntos de corte).
+
+\
+
+En el caso de que no indiquemos etiquetas, R asignará automáticamente los valores de corte como etiqueta. 
+Otra opción es dejar que R "decida" los puntos de corte, simplemente indicándole el número de categorías que se quieren formar (en lugar de dar un valor). En este caso, R seleccionará categorías distribuidas con un ancho constante.
+
+```{r}
+students_binning$Income.cat2 <- cut(students_binning$Income,
+                                    breaks = bp) #No hay etiquetas.
+
+students_binning$Income.cat3 <- cut(students_binning$Income,
+                                    breaks = 4, 
+                                    labels = c("Level 1",
+                                               "Level 2",
+                                               "Level 3",
+                                               "Level 4")
+                                    ) #Ahora hay 4 cortes que R decidirá y se le colocarán las etiquetas "Level 1, etc". Si quitamos las etiquetas, la etiqueta automática indicará el punto de corte que ha seleccionado R.
+
+```
+\
+
+> Es clave observar que solo estamos trabajando con un dataframe, al que se le van "CREANDO" columnas al "ACCEDER" a "columnas inexistentes" con la sintaxis del dólar ($), por ejemplo, _income.cat2_ o _income.cat3_. Estas columnas se van agregando directamente al dataframe original (students_binning).
+
+
+
+
+
+
+
+
+
+
+
+
+
+

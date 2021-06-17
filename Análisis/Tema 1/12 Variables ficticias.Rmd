@@ -1,0 +1,68 @@
+---
+title: "Variables ficticias / Dummy Variables"
+output: html_notebook
+---
+
+\
+
+Muchas veces tenemos variables discretas (factores) pero sobre ellas tenemos que computar con modelos que requieren números para funcionar. En estos casos, es necesario utilizar "variables ficticias" cuya única función es asignar un número a esa variable categórica. Para ello, vamos a usar el paquete _**dummies**_. En el caso de que no lo tengamos lo instalaremos _(instal.packages ("dummies"))_ y lo cargamos _(library(dummies))_.
+\
+
+Como siempre, vamos a guardar el dataset en una variable para no tener que recargarla cada vez.
+
+```{r}
+library(dummies)
+students <- read.csv("/Users/Ariel/Library/Mobile Documents/com~apple~CloudDocs/AADD/DataScience-con-RStudio/Datos/tema1/data-conversion.csv")
+```
+\
+
+Del dataframe cargado, podemos ver que hay dos variables categóricas: el sexo y el estado. Vamos a modificarlo utilizando la función **dummy.data.frame**. Esta función requiere el dataframe original y un separador (que utilizará para generar el nuevo nombre de la variable, en este caso usaremos el punto).
+
+```{r}
+students.dummy <- dummy.data.frame(students, sep = ".")
+```
+
+```{r}
+View (students.dummy) #Enseña el resultado con el visor de dataframes.
+head(students.dummy, 3) #Imprime el resultado en pantalla y en el documento. Sirve para el caso de que queramos presentarlo como parte de un PDF, por ejemplo.
+```
+\
+
+Básicamente, la función ha creado nuevas variables, donde se desplegaron las variables categóricas que ahora tienen un cero para las "no coincidencia" y un uno para las "coincidencias". Así, la variable categórica "Gender" que antes tenía valores categóricos ("M" y "F") ahora se ha transformado en _Gender.M_ y _Gender.F_ que para una observación que inicialmente era "M" ahora valdría 1 en _Gender.M_ y 0 en _Gender.F_.
+
+Podríamos hacer variables ficticias con una única variable: tendríamos que escoger solamente la variable categórica de interés. Por ejemplo:
+
+```{r}
+dummy(students$Gender) -> dummy.gender
+View(dummy.gender)
+head(dummy.gender, 3)
+
+```
+\
+
+Otra opción, en el caso de dataframes muy grandes, sería buscar la coincidencia de nombre de variable y aplicarle la conversión. En este caso, usamos el argumento **names** de la función **dummy.data.frame** y en formato de vector ($c$) colocamos el _string_ a buscar. Cuando se genere el nuevo dataframe, las variables ficticias generadas serán exclusivamente las que hayan coincidido con los parámetros de **names**. Por ejemplo:
+
+```{r}
+dummy.search <- dummy.data.frame(students, names = c("State",
+                                "Gender"),
+                                sep = ".")
+
+head(dummy.search, 3)
+```
+\
+
+> En este caso ha dado el mismo resultado inicial, pero podríamos suprimir el _string_ "Gender" dentro de **names** y entonces solo se crearían variables ficticias para _State_, ya que solo coincidiría con esa búsqueda.
+
+
+
+
+
+
+
+
+
+
+
+
+
+

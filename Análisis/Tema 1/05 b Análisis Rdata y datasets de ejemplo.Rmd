@@ -1,0 +1,77 @@
+---
+title: "Análisis de ficheros Rdata"
+output: html_notebook
+---
+\
+
+#### Generación de objetos Rdata y uso de la función _**save**_.
+\
+
+Este tipo de objetos se utiliza para guardar distinta información (como dataframes, etc.) y posteriormente compartirlos ya que son un formato reconocido por R. Veamos cómo crearlos y leerlos. Vamos a crear algunas variables:
+
+```{r Creación de variables}
+clientes <- c("Juan", "Ricardo", "Pedro")
+fechas <- c("2017-12-3", "2018-10-3", "2015-14-5")
+```
+\
+
+Si guardamos así, el resultado será que las fechas serán interpretadas por R como caracteres (podemos verlo en la pestaña **Global Enviroment** donde en el tipo de valor se indicará _chr_). Para evitarlo, vamos a guardarlo haciendo uso de la opción **as.Date**. 
+
+> Sin embargo, para usar esta conversión es necesario tener número escritos como fecha en formato anglosajón, es decir, AAAA-MM-DD.
+
+```{r}
+clientes <- c("Juan", "Ricardo", "Pedro")
+fechas <- as.Date(c("2017-12-3", "2018-11-3", "2015-4-15"))
+pago <- c("314", "21.50", "22")
+```
+\
+
+Una vez creadas las variables en las que se guardan las informaciones, podríamos guardarlo en un dataframe que es el objeto básico para análisis de datos en R. Para ello, usamos la función **data.frame (nombre-de-las-variables-que-serán-las-columnas)**. En este caso, las columnas serán las variables "clientes", "fechas" y "pago".
+
+```{r}
+pedidos <- data.frame(clientes, fechas, pago)
+```
+\
+
+Ahora que hemos generado el dataframe, ya podemos guardar el fichero usando la función **save**. Esta función requiere un nombre de fichero y una ruta
+
+```{r}
+save(pedidos, file = "/Users/Ariel/Library/Mobile Documents/com~apple~CloudDocs/AADD/DataScience-con-RStudio/Datos/tema1/pedidos_ariel.Rdata")
+```
+
+También podríamos guardar en el formato rds, usando la función **save.RDS** (notar que RDS va en mayúsculas).
+
+Finalmente, podríamos hacer una limpieza de variables usando la función **remove (nombre)**. En este caso, se elimina por completo la variable o dataframe de memoria, a diferencia de lo que sucede cuando usamos la escoba que solo quita la lista.
+\
+\
+
+##### Cargando datasets de ejemplo.
+
++ R trae en su propio conjunto de base (_core_) varios datasets de ejemplo. 
++ Para cargarlos, hacemos uso de la función **data** y los nombres (que se autocompletan con tabulador). 
++ Si usamos solo la función **data** nos indicarán todos los datasets incluídos y con su nombre. 
+
+Todos los conjuntos de datos se encuentran en el paquete **datasets** de R base, así que por defecto estarán cargados.
+
+```{r}
+data("iris")
+data("cars")
+```
+\
+
+
+#### Cargando archivos Rdata.
+\
+
+Usamos la sentencia **load("ruta/fichero.Rdata")**. En este caso, si hay alguna variable en el entorno que coincida en nombre, será sobreescrita. Si queremos una advertencia al respecto, podemos usar la función **attach("ruta/nombre.Rdata")**.
+\
+\
+
+##### Diferencias entre Rdata y rds
+\
+
+La principal es que _Rdata_ **guarda los nombres de las variables y su contenido**, es decir, se guardan distintos tipos de datos. Sin embargo, _rds_ solo guarda un único tipo de objeto, sin su nombre. Así, vamos a necesitar usar la función **readRDS ("path-directorio")** y volver a indicar un nombre de variable donde guardaremos la información contenida en el documento _rds_.
+\
+\
+
+Otra opción de SAVE es guardar toda sesión en una imagen de sesión. Para ello usamos la función _save.image("ruta-adonde-guardar/nombre.Rdata)_, de tal forma que se puede compartir toda la sesión.

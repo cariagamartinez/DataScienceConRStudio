@@ -1,0 +1,68 @@
+---
+title: "Análisis de componentes principales"
+output: html_notebook
+---
+\
+
+La idea es reducir la dimensionalidad, reteniendo la cantidad máxima de información y generando componentes no relacionados.
+
+```{r}
+usarrests <- read.csv("/Users/Ariel/Library/Mobile Documents/com~apple~CloudDocs/AADD/DataScience-con-RStudio/Datos/tema3/USArrests.csv", stringsAsFactors = F)
+```
+\
+
+Vemos que el dataset tiene una primera columna llamada "X" que contiene el nombre de cada estado. Vamos a asignarle dicho nombre al identificador y luego vamos a borrar dicha columna. Para ello:
+
+```{r}
+rownames(usarrests) <- usarrests$X
+usarrests$X <- NULL
+```
+
+\
+
+Como segundo paso, vamos a ver cómo están distribuida la variabilidad de los datos. Es posible que una variable "capture" todo o hallan sesgos debido a que los números más altos se lleven por delante el cómputo (por ejemplo, es más probable que hayan muchísimos más asaltos antes que asesinatos). La presencia de estos sesgos podría afectar el análisis.
+
+Para ver la varianza total, vamos a aplicar la función varianza por columna (2), usando la función **apply**.
+
+```{r}
+apply (usarrests, 2, var)
+```
+\
+
+Como podemos ver, hay mucha variabilidad y puede ser necesario reescalar y centrar los datos. Esto lo podemos hacer directamente usando la función de análisis de componente principal **prcomp**. Para ello, vamos a usar _center_ y _scale_ igual a T, de tal forma que a cada valor se le reste la media y se divida por su DS, estandarizando dicho valor. Le pediremos que saque por ventana el resultado (**print**) y luego haremos un plot de codo para ver qué componentes seleccionar.
+
+
+
+```{r}
+acp <- prcomp (usarrests, center = T, scale = T)
+print (acp)
+
+```
+
+\
+Cada componente principal es una proyección en el plano de una gráfica tridimensional: no es la variable en sí, sino una combinaci´no lineal de varias variables. Cada una se va combinando linealmente y luego se hace una correlación para ver cómo se ajuste cada componente (cada combinación de variables) a la variable original. El resultado se indica como la correlación de cada componente con la variable inicial. 
+
+El plot de codo lo llamamos así porque lo que se grafica es la varianza en función del componente principal. A medida que el componente explica menos varianza llegará un punto en que se producirá un "quiebre/codo" que será indicativo del componente último con el que nos quedaremos. No hay ninguna forma gráfica de saber "a priori" cuántos componentes deberíamos seleccionar.
+
+```{r}
+plot (acp, type = "l")
+```
+\
+
+Podríamos agregar un resumen, usando la función **summary**
+
+```{r}
+summary(acp)
+```
+\
+
+Como podemos ver, si seleccionamos dos componenentes, el uno y el dos, podríamos retener el 86% de la información/variabilidad explicada en los datos.
+
+
+```{r}
+biplot (acp, scale = 0)
+```
+
+\
+
+En este diagrama, la longitud de las flechas es un indicativo de la variabilidad de la variable, el coseno del ángulo aproxima a la correlación entre las variables, la distancia entre los puntos estima la disimilitud entre ellos y las proyecciones de cada punto sobre el vector nos permiten ordenar los puntos para esa variable

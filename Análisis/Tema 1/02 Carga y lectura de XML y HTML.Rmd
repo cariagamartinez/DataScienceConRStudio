@@ -1,0 +1,105 @@
+---
+title: "Carga y lectura de archivos en formato XML y HTML"
+output: html_notebook
+---
+\
+
+#### Lectura de archivos XML
+\
+
+Como primer paso instalaremos un paquete que no viene instalado en la base de R y que se llama XML. Como siempre, la sintaxis es: **install.packages("XML")** y cargamos con el comando **library(nombre del paquete no entrecomillado)**:
+
+```{r}
+#install.packages("XML")
+library(XML)
+```
+\
+
+**COMO SIEMPRE, COMO BUENA PRÁCTICA**, vamos a guardar los datos leídos en una variable, que llamaremos _url_, de tal forma que no tengamos que invocar la ruta cada vez:
+
+```{r}
+url <- "/Users/Ariel/Library/Mobile Documents/com~apple~CloudDocs/AADD/DataScience-con-RStudio/Datos/tema1/cd_catalog.xml"
+```
+\
+
+Como podemos ver, se ha guardado en un tipo de variable "indistinta": la variable _url_ que aparece en la pestaña **Global Environment** no nos da ninguna información, es decir, es simplemente un vector que guarda datos sin una estructura particular ya que R no puede leer directamente los documentos XML.
+
+Ahora vamos a realizar un "pre-análisis" del documento XML: consistirá en una prelectura/analisis del XML utilizando la función **xmlParse** ( _parse_ quiere decir _analizar_), del paquete XML. Guardaremos el análisis realizado en una variable llamada _xmldoc_.
+
+El XML es un formato que organiza un documento en nodos, así que para extraer su contenido necesitamos obtener primeramente el nodo raíz y desde ahí, el resto de nodos. Una vez hecho el análisis anterior, buscaremos ese nodo raiz con la función **xmlRoot**, utilizando el preanálisis guardado en la variable _xmldoc_. La función **xmlRoot** recorrerá el XML y obtendrá el nodo raíz (_root node_) y cada nodo. Le pediremos que guarde los nodos leídos (tanto el raiz como el resto) dentro de la variable _rootnode_.
+
+```{r}
+xmldoc <- xmlParse (url)
+rootnode <- xmlRoot(xmldoc)
+```
+\
+
+Si ejecutamos la sentencia **rootnode**, seguida del número del nodo entre corchetes, podríamos ver el contenido de cada nodo (así, **rootnode[2]**, nos devolvería los datos contenidos en el segundo nodo).
+
+Pero esto no es muy útil, así que vamos a crear un _CSV_ para tener todos los datos en este formato, usando la función **xmlSApply** del paquete XML (guardaremos el resultado en una variable llamada _cds_data_).
+
+La función **xmlSApply** necesitará dos argumentos: el conjunto de nodos leídos (y que tenemos "guardados" en la variable _rootnode_), y la función **xmlSApply** con su argumento **xmlValue**, para obtener todos los valores de cada $x$.
+
+```{r}
+cds_data <- xmlSApply(rootnode, function(x) xmlSApply(x, xmlValue))
+```
+\
+
+Tras ejecutar la sentencia anterior obtenemos una matriz de datos. Es muy parecida a un _dataframe_ pero no lo es. Para crear un _dataframe_ tenemos que hacer uso de la función **data.frame** y además, tendremos que trasponer la matriz generada usando la función _t_. Podemos indicar si cada fila tiene nombre con el parámetro **row.names**.
+
+```{r}
+cds.catalog <- data.frame(t(cds_data), row.names = NULL)
+```
+\
+
+##### ¿Cómo funciona esto?
+\
+
+La función **xmlParse**, crea un fichero de tipo _XMLInternalDocument_, no trabajable en R. Al hacer **xmlRoot**, se lee toda la estructura. Luego con la función **xmlSApply**, vamos recorriendo cada nodo y con el argumento **xmlValue**, se extrae cada valor. El resultado es una matriz de datos, pero no es ningún "tipo" de dato. Por eso creamos un _dataframe_, que se guarda en _cds.catalog_.
+\
+
+> Buscar información sobre:
+> - _xpathSApply()_
+> - _getNodeSet_
+
+\
+
+
+#### Lectura de archivos HTML.
+\
+
+Un documento html es también una variante de XML. Por ello, vamos a leer un documento _html_ que contiene tablas, de una forma "automatizada". 
+
+En primer lugar guardaremos el documento en una variable y luego leeremos todas las tablas interiores con la función **read.HTMLtable**: todas las tablas leídas serán guardadas en la variable _tables_.
+
+```{r}
+  population_url <- "/Users/Ariel/Library/Mobile Documents/com~apple~CloudDocs/AADD/DataScience-con-RStudio/Datos/tema1/WorldPopulation-wiki.htm"
+tables <- readHTMLTable(population_url)
+```
+\
+
+Como vemos en **Global Environment** se ha creado un dataframe llamado _tables_ que realmente es una lista de 28 tablas. Sin embargo, son listas anidadas así que la sintaxis de acceso es doble corchete. Así, guardamos en una variable alguna tabla de interés. Por ejemplo, vamos a acceder a la tabla 6 (recordando que es una lista de listas) y la guardamos en la variable _most_populated_:
+
+```{r}
+most_populated <- tables [[6]]
+```
+\
+
+Si supiéramos exactamente la posición de la tabla, podríamos utilizar el argumento **which** que indica exactamente el número de la tabla a la que se accedería.
+
+```{r}
+custom_table <- readHTMLTable(population_url, which = 10)
+```
+\
+
+En la sentencia anterior se accede a la tabla número 10. Este acceso es muy importante ya que a veces cargar en memoria todas la tablas para trabajar con una sola puede ser un problema o llevar mucho tiempo.
+\
+\
+
+**RECORDEMOS QUE PODEMOS USAR LA FUNCIÓN read.HTMLTable CON PÁGINAS WEBS** 
+
+**Ejemplo**:
+
+* library(xml) #Cargamos la librería.
+\
+* datos = readHTMLTable("<<pon aquí tu URL>>") #Cargamos la tabla que esté en la url en la variable que se llama _datos_.

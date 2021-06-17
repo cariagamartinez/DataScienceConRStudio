@@ -1,0 +1,85 @@
+---
+title: "Curvas ROC"
+output: html_notebook
+---
+\
+
+#### Características operativas del receptor (ROC)
+\
+
+La idea de la curva ROC es evaluar la fiabilidad de las clasificaciones, en particular, cuando tenemos opciones dicotómicas (éxito/fallo, etc.). Existen distintas opciones, pero podríamos usar una opción que nos indicar la probabilidad de acierto de nuestra clasificación, realizada por el algoritmo, y así evaluar el modelo.
+
+Para ello, necesitamos calcular la sensibilidad (aciertos, verdaderos positivos) y la especificidad (verdadero negativos, aunque vamos a graficar 1-E, es decir, el error generado sobre la E) y graficar una curva ROC que permita obtener una ayuda visual para saber cuánto fallaré (por eso, se grafican 1-E, es decir, los falsos negativos).
+
+Vamos a usar el paquete **ROCR**, por lo que lo instalaremos y lo cargaremos (**install.package ("ROCR")**, **library(ROC)**).
+
+```{r}
+library(ROCR)
+```
+\
+
+En este ejemplo vamos a usar 2 csv similares (en un caso tenemos un valor numérico y en el otro caso, con un _string_). La idea es que un algoritmo determinado de clasificación, ha generado una probabilidad del tipo "éxito/fracaso" ("cero/uno" o "comprador/no comprador"). Lo que queremos saber son las tasas de verdadero y falsos aciertos para poder saber con qué probabilidad una observación nueva/futura clasificada por el mismo algoritmo, nos dará un éxito o un fallo verdaderos.
+
+El primer paso, es cargar los csv en una variable:
+
+```{r}
+data1 <- read.csv("/Users/Ariel/Library/Mobile Documents/com~apple~CloudDocs/AADD/DataScience-con-RStudio/Datos/tema3/roc-example-1.csv")
+
+data2 <- read.csv("/Users/Ariel/Library/Mobile Documents/com~apple~CloudDocs/AADD/DataScience-con-RStudio/Datos/tema3/roc-example-2.csv")
+```
+\
+
+Los CSVs tienen una probabilidad asociada (calculada por el algoritmo de clasificación _prob_) y un resultado "real" (_class_). Tenemos que evaluar dicha predicción, usando la función **prediction** del paquete **ROCR**. Luego tendríamos que evaluar la performance de la predicción usando la función **performance**, que tiene algunas medidas disponibles: en este caso usaremos el parámetro **fpr** (false positive rate, tasa de falsos positivos) y el parámetro **tpr** (true positive rate, tasa de verdaderos positivos).
+
+```{r}
+pred1 <- prediction(data1$prob, data1$class)
+perf1 <- performance(pred1, "tpr", "fpr")
+```
+
+\
+Vamos a representar la performance en un plot y vamos a colocar una diagonal (que empieza en 0,0 y termina en 1,1)
+
+```{r}
+plot(perf1)
+lines (par ()$usr[1:2], par()$usr[3:4]) #simplement coloca la diagonal del gráfico
+```
+\
+
+En este caso hemos generado un gráfico ROC de performance del algoritmo de clasificación. Como podemos ver, cuando el algoritmo asigna un 80% de probabilidad a que sea un verdadero positivo (eje $y$), automáticamente hay >20% de probabilidad de que sea un falso positivo (eje $x$): es decir, **EN LAS CLASIFICACIONES NUNCA OBTENDREMOS EL 100% DE SEGURIDAD**. De la misma forma, cuando el algoritmo indica que hay un 60% de probabilidad de que sea un verdadero positivo (eje $y$), se observa que hay aproximadamente un 10% de probabilidades de que sea un falso positivo (eje $x$). 
+
+De lo anterior, se puede deducir que siempre que el algoritmo indique una tasa de verdadero éxito, tendrá aparejada una tasa de falso éxito. Además, como podemos ver (excepto en la primera parte de la curva donde una variable aumenta de forma exponencial y la otra, no) a medida que aumenta la tasa de verdadero éxito, también aumenta la tasa de falso éxito.
+
+Debido a lo anterior, tendremos que decidir a partir de qué probabilidad determinada por el algoritmo como verdadero éxito, tenemos tasas aceptables de falso éxito. Así, cuando obtengamos una nueva observación y el algoritmo le indique una tasa de verdadero éxito, podremos aceptarlo como "verdadero éxito" ya que su tasa de falso éxito ha sido aceptable. Por ejemplo, si decidimos que el punto de corte para este algoritmo de clasificación está en el 80% (eje $y$), esto significa que siempre que el algoritmo clasifique una observación como "éxito" quiere decir que hay un 80% de probabilidad de que sea un "verdadero éxito" (eje $y$) pero, como vimos previamente, también hay >20% de que sea un "falso éxito" (eje $x$). De nuevo, **EN LAS CLASIFICACIONES NUNCA OBTENDREMOS EL 100% DE SEGURIDAD**. 
+
+Podríamos generar un dataframe con un corte para evaluar lo anterior. Para ello, vamos a generar un dataframe, donde la columna 1 se llame cut y guarde los valores llamados "alfa" del objeto **perf1** (estos valores son las probabilidades, que ha guardado el objeto **perf1** cuando hizo el estudio de performance. Como accedemos a una lista de listas, usamos el doble corchete). La siguiente columna se llamará _fpr_ y guardará los valores que el objeto perf1 guarda como valores de X (nótese que hay que acceder con una notación específica, ya que es un objeto creado por el paquete **ROCR** y es una lista de listas, por ello se accede con el doble corchete). La tercera columna será _tpr_ y guardará los valores del eje Y.
+
+```{r}
+prob.cuts.1 <- data.frame (cut = perf1@alpha.values[[1]],
+                           fpr = perf1@x.values[[1]],
+                           tpr = perf1@y.values[[1]])
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,30 @@
+---
+title: "Función Split"
+output: html_notebook
+---
+\
+
+#### Generar subdivisiones usando la función **split**
+\
+
+En este caso, queremos hacer una división usando variables categóricas. Para ello usaremos la función **split**. Como siempre guardamos
+
+```{r}
+data <- read.csv("/Users/Ariel/Library/Mobile Documents/com~apple~CloudDocs/AADD/DataScience-con-RStudio/Datos/tema2/auto-mpg.csv", header = T, stringsAsFactors = F)
+```
+\
+
+Vamos a "cortar" la lista, usando el número de cilindros (variable categórica):
+
+```{r}
+carlist <- split(data, data$cylinders)
+```
+\
+
+Como resultado tenemos una lista/colección de dataframes. **Un punto importante es reconocer que las listas solo tienen una única posible localización, es decir, no constan de filas y columnas, por ello, para acceder a la primera posición de una lista podemos usar corchetes sin necesidad de una coma**.
+
+```{r}
+carlist[[1]]
+
+```
+
