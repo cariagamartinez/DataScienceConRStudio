@@ -1,0 +1,100 @@
+---
+title: "05 Random Forest"
+output: html_notebook
+---
+
+\
+
+La idea de los bosques aleatorios es utilizar más de un árbol de decisión para realizar la clasificación. En este caso, haremos usos de dos paquetes: **caret** y **randomForest**.
+
+```{r}
+library(randomForest)
+library (caret)
+```
+
+\
+
+Seguimos con el mismo dataframe:
+
+```{r}
+banknote <- read.csv ("/Users/Ariel/Library/Mobile Documents/com~apple~CloudDocs/AADD/DataScience-con-RStudio/Datos/tema3/banknote-authentication.csv")
+```
+\
+
+Convertimos la variable _class_ a factor:
+
+```{r}
+banknote$class <- factor(banknote$class)
+```
+\
+
+Aunque el algoritmo generará particiones de datos, es conveniente "no dárselo todo masticado" sino retener algo de control del sistema. Por ello, vamos a establecer una semilla y luego una partición (70% de los datos que ahora están en formato factor y que se devuelva como un array, en lugar de una lista).
+
+El modelo se construye con la función **randomForest** y en $x$ indicamos las variables independientes en las que se basará: en este caso, las cuatro columnas del dataframe. En $y$, indicaremos las variables dependientes, es decir, el dato "medido/de salida". Dos parámetros más podríamos indicar: el número de árboles a generar (**ntree**) y si queremos quedarnos con los árboles generados para ver cómo está analizando los datos (en condiciones normales, los eliminaríamos, pero como resultado no tendríamos los árboles generados y no podríamos volver a aplicar exactamente el mismo modelo)
+
+```{r}
+set.seed(2018)
+training.ids <- createDataPartition(banknote$class, p = 0.7, list = F)
+
+mod <- randomForest(x=banknote[training.ids, 1:4],
+                    y=banknote[training.ids, 5],
+                    ntree = 500,
+                    keep.forest = TRUE)
+
+pred <- predict (mod, banknote[-training.ids,], type = "class")
+matrix1 <- table(banknote[-training.ids, "class"], pred, dnn = c("Actual","Predicho"))
+matrix1
+```
+
+
+Ahora podríamos generar un diagrama ROC, para ello:
+
+* Generamos una predicción usando el modelo creado, pero de tipo **prob**. Esto nos devolverá una probabilidad.
+* Para ver qué se generó en dicha predición, usamos **head** para ver las filas y columnas.
+* Para el diagrama ROC tenemos que generar la predicción correspondiente, enfrentando dos variables: por una parte la propia predicción del punto anterior (que contiene los valores de probabilidades) y aplicándolas al resto de datos (los que NO SON training ids) pero usando la función **prediction** del paquete **ROCR**.
+* Una vez generada dicha predicción tenemos que realizar la bondad de ajuste con la función **performance** también del paquete **ROCR**. En este caso, requerimos la predicción realizada y que devuelva las tasas seleccionadas.
+* Finalmente realizamos el plot.
+
+
+```{r}
+probs <- predict (mod, banknote[-training.ids,], type = "prob")
+head(probs)
+
+library(ROCR)
+
+pred2 <- prediction(probs[,2], banknote[-training.ids, "class"])
+perf <- performance(pred2, "tpr", "fpr")
+plot(perf)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,89 @@
+---
+title: "Modelos predictivos para imputar datos"
+output: html_notebook
+---
+\
+
+En técnicas estadísticas, no suele ser aconsejable "destruir" datos, mediante su omisión o borrado. Por ello, vamos a ver de qué forma algunos modelos de predicción nos permiten "agregar" datos faltantes (en lugar de simplemente reemplazarlos por la media, mediana, etc.). **DE NUEVO, RECORDEMOS EL SIGNIFICADO DE IMPUTE EN INGLÉS: ES IMPUTAR UN DATO TRAS UNA COMPUTACIÓN O CÁLCULO EN LUGAR DE UNA ASIGNACIÓN POR AZAR O DECISIÓN**.
+
+Para ello, vamos a utilizar el paquete **mice** y el documento con información sobre casas con presencia de datos faltantes (_housing-with-missing-data_). 
+
+\
+
+**Como siempre, el primer paso es guardar el dataframe en una variable.**
+
+```{r}
+housing.data <- read.csv("/Users/Ariel/Library/Mobile Documents/com~apple~CloudDocs/AADD/DataScience-con-RStudio/Datos/tema1/housing-with-missing-value.csv",
+                         header = T,
+                         stringsAsFactors = F)
+```
+
+\
+
+Una vez guardada la información, vamos a seleccionar las columnas que contienen los valores faltantes y vamos a usar la función **mice** del mismo paquete **mice**.
+
+Como paso previo, vamos a guardar los nombres de columnas en la variable _columns_. Este paso previo nos ayudará en el procedimiento posterior.
+
+En primer lugar, vamos a indicar las columnas sobre las que se ejecutará el reemplazo: en este caso son todas las filas y luego las columnas cuyo nombre en el dataframe coincidan con los nombres guardados en la variable _columns_.
+
+El paquete **mice** es un paquete iterativo que utliza ecuaciones y modelos enganchados y va generando posibles datos de reemplazo aplicando dichos métodos y modelos matemáticos. Podemos indicarle el número de valores de reemplazo que queremos generar y el número de iteraciones que queremos que lleve a cabo para hallar dichos valores. Estos valores se definen con el parámetro **m** (donde 5 es el valor por defecto y se refiere al número de valores imputables/calculados) y **maxit** (que es el número de iteraciones que realizará para encontrar los valores: en este caso lo ponemos a 50). Luego indicamos el método que utilizará el paquete para completar los datos faltantes (hay varios -> ver ayuda). En este caso, usaremos el método **pmm = predictive mean matching**.
+
+Finalmente, pondremos un valor aleatorio, denominado "semilla" que servirá para que cada vez que se realice el cálculo se obtenga el mismo modelo.
+
+```{r}
+library(mice)
+columns <- c("ptratio", "rad")
+
+imputed_data <- mice (housing.data[,names(housing.data) %in% columns],
+                      m = 5,
+                      maxit = 50,
+                      method = "pmm",
+                      seed = 2018)
+```
+
+\
+
+Con esto, hemos generado un modelo que nos ayudará a completar el dataframe. Para terminar, vamos a usar la función **complete** también del paquete **mice**, que geneará un dataframe con todos los valores predichos para las dos variables en las que haya detectado valores no disponibles ($NAs$). Luego vamos vamos a aplicar el modelo sobre el dataframe original).
+
+Es posible que la función **complete** se llame igual en otros paquetes así que vamos a  especificar que se tome la función **complete** específica del paquete **mice** usando la sintaxis "::".
+
+```{r}
+completed.data <- mice::complete(imputed_data) #Generamos un dataframe con 2 variables: las que tienen $NAs$
+```
+
+\
+
+Lo que queda es asignar las nuevas columnas al dataframe antiguo. Simplemente lo hacemos por asignación y evaluamos la presencia de $NAs$.
+
+```{r}
+housing.data$ptratio <- completed.data$ptratio
+housing.data$rad <- completed.data$rad
+#Usamos la función anyNA para ver si quedan NAs en el dataframe
+anyNA(housing.data) #El resultado el F -> OK
+```
+
+\
+
+### USANDO EL PAQUETE HMISC
+\
+
+Podríamos usar también el paquete **Hmisc** para hacer algo similar, aplicando su función **aregImpute**. Como el dataframe inicial ya no tiene NAs, vamos a importarlo nuevamente a otra variable:
+
+```{r}
+housing.data.2 <- read.csv("/Users/Ariel/Library/Mobile Documents/com~apple~CloudDocs/AADD/DataScience-con-RStudio/Datos/tema1/housing-with-missing-value.csv",
+                         header = T,
+                         stringsAsFactors = F)
+```
+
+Y ahora vamos a hacer una inferencia de datos con el paquete en cuestión. Le indicamos las columnas que queremos imputar, el dataframe y el número de cálculos que realizará
+
+```{r}
+library(Hmisc)
+
+impute_arg <- aregImpute(~ptratio + rad, data = housing.data.2, n.impute = 5) #Cuidado que genera una lista en lugar de un dataframe como el paquete mice
+```
+
+En este modelo, se generará un elemento dentro de la lista que se llama _imputed_ que contendrá los datos imputados/calculados. Con estos datos deberíamos reemplazar las columnas del dataset con contiene $NAs$
+
+
+

@@ -1,0 +1,139 @@
+---
+title: "Corrección de datos (clase 37)"
+output: html_notebook
+---
+\
+
+Realizaremos una corrección y reorganizados de datos para dejar listo el dataframe para su futuro análisis. Por ahora vamos a usar el paquete **tidyr**. Como siempre, vamos a importar nuestro dataframe a una variable (y evitamos usar los strings como factores). Además, en este notebook vamos a ver "el antes y el después" de las transformaciones usando la función **head** para ver 2 líneas de cada dataframe antes y despúes del procedimiento:
+
+```{r}
+library(tidyr)
+crime.data <- read.csv ("/Users/Ariel/Library/Mobile Documents/com~apple~CloudDocs/AADD/DataScience-con-RStudio/Datos/tema1/USArrests.csv",
+                        stringsAsFactors = F)
+head(crime.data, 2)
+```
+\
+En este dataset vemos que hay datos sobre crímenes, desglosados en variables (50 observaciones en 5 variables).
+\
+\
+
+
+#### AÑADIR UNA COLUMNA
+
+Vamos a añadir una nueva columna, usando la función **cbind**. En este caso, vamos a insertar una nueva columna llamada _state_, en la que guardaremos los nombres de las filas del propio dataset (que en este caso son número de estado de Estados Unidos) y lo volveremos a guardar todo en el dataset _crime-data.0_:
+
+```{r}
+crime.data.0 <- cbind (state = rownames(crime.data), crime.data)
+head(crime.data, 2)
+head(crime.data.0, 2)
+```
+\
+Ahora tenemos, entonces, **6 columnas**.
+\
+\
+
+#### REUNIR COLUMNAS
+\
+
+En el dataset con el que trabajamos, tenemos datos de crímenes en estados de Estados Unidos. Cada tipo de crimen está representado por una columna y el número de arrestos (su valor) es una observación ubicada en la fila correspondiente. Así, tenemos 5 columnas y debajo el valor que le corresponde. Entonces, cada estado solo tiene una única fila que recoge el número de cada variable.
+
+Sin embargo, es posible que queramos colapsar toda la información, juntando todos los tipos de crímenes y el número de arrestos en dos columnas únicamente. En este caso, tenemos variables categóricas (tipo de crimen/población) y variables númericas (el número de arrestos por cada crímen o la población urbana) por lo que R lo puede hacer automáticamente, combinando pares "clave/valor": R detecta la variable **cualitativa** y su **valor** y transpone la columna a una fila. Para ello, usamos la función **gather** del paquete **tidyR**. 
+\
+
+> Tenemos que tener en cuenta que al colapsar columnas, las filas aumentarán de número ya que ahora cada variable cualitativa, tendrá 3 filas de observaciones cuantitativas.
+
+\
+
+En este ejemplo, lo que queremos hacer es combinar en pares "clave/valor" todas las columnas, de tal forma que las columnas ahora se transformen en filas, agrupadas por su valor. En definitiva, vamos a colapsar columnas (lo que aumentará el número de filas). En este caso, vamos a colapsar 4 columnas en 2, de tal forma que se ahora tengamos 4 variables en lugar de 6 (RECORDEMOS QUE CREAMOS UNA NUEVA COLUMNA EN EL APARTADO ANTERIOR). 
+
+Como podemos ver en el dataset original, tenemos dos variables de "tipos de crímenes" (_Murder_ y _Assault_), luego hay una variable que se refiere a la población urbana (_UrbanPop_) y luego está la variable _Rape_. 
+
+Usando la función **gather**, podríamos reunir todos las columnas del dataset (_crime.data_) en una nueva variable, colapsando por un lado las columnas (tipo de crimen y población --> _key_) y por el otro la cantidad/valor (_value_) asignada a cada columna. Le daremos un nombre a la nueva variable que guardará las claves (_crime.type_) y un nuevo nombre a la variable que guardará los valores (_"arrest_estimation"_). Finalmente, indicaremos el rango de las columnas a colapsar. Todo el resultado se guardará en el nuevo dataset llamado _crime.data.1_.
+
+```{r}
+crime.data.1 <- gather(crime.data,
+                       key = "crime_type",
+                       value = "arrest_estimation",
+                       Murder : Rape)
+head(crime.data, 2)
+head(crime.data.1, 2)
+```
+\
+Si seguimos bajando, tendremos de nuevo los datos del primer estado, etc. Por eso, para visualizarlo es mejor si ordenamos por nombre de estado: tendremos una sola variable (_crime_type_) y cuatro entradas por estado en la misma columna (las que colapsamos: _Murder_, _Assault_, _UrbanPop_ y _Rape_) con su correspondiente valor numérico que ahora llamamos _arrest_estimation_:
+
+Con la misma función podríamos seguir colapsando las columnas, evitando alguna en particular con el signo menos, delante:
+
+```{r}
+crime.data.2 <- gather(crime.data.0,
+                       key = "crime_type",
+                       value = "arrest_estimate",
+                       -state)
+```
+
+Con la misma función podríamos seguir colapsando las columnas, seleccionándolas (en este caso solo se colapsan dos columnas: Murder y Assault):
+
+```{r}
+crime.data.3 <- gather(crime.data,
+                       key = "crime_type",
+                       value = "arrest_estimate",
+                       Murder, Assault)
+```
+\
+
+
+#### SEPARAR FILAS PARA GENERAR NUEVAS COLUMNAS
+\
+
+Usaremos la función *spread*. Esta es la función que haría lo contrario a **gather**. Vamos a usar el dataset _crime.data.2, ya que es el más colapsado.
+
+```{r}
+crime.data.4 <- spread (crime.data.2,
+                       key = "crime_type",
+                       value = "arrest_estimate")
+head(crime.data.2, 2)
+head(crime.data.4, 2)
+```
+
+\
+
+#### FUSIONAR Y SEPARAR FUSIONES
+\
+
+Como opción, a veces necesitamos "combinar" columnas, es decir, unirlas literalmente. Para ello, usaremos la función **unite** y un valor/caracter separador. En este caso, fusionaremos las columnas Murder y Assault del dataset original (crime.data), usando el separador guion bajo. En este caso, se fusionarán dos números, estando separados por una barra baja, por lo que no será muy útil...
+
+```{r}
+crime.data.5 <- unite(crime.data,
+                       col = "Murder_Assault",
+                       Murder, Assault,
+                      sep = "_")
+head(crime.data, 2)
+head(crime.data.5, 2)
+```
+
+\
+La función contraria es **separate**. En este caso, vamos a seleccionar el dataframe donde están las columnas fusionadas y luego agregar el parámetro que contendrá los nuevos nombres (con sintaxis de vector) e identificando la zona de corte (en este caso, guion bajo):
+
+```{r}
+crime.data.6 <- separate (crime.data.5,
+                       col = "Murder_Assault",
+                       into = c("Murder", "Assault"),
+                      sep = "_")
+head(crime.data.5, 2)
+head (crime.data.6, 2)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

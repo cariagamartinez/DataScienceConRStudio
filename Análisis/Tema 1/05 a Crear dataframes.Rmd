@@ -1,0 +1,46 @@
+---
+title: "Creación de dataframes"
+output: html_notebook
+---
+\
+
+#### Generación de objetos RData.
+\
+
+Este tipo de objetos se utiliza para guardar distintas información (como dataframes, etc.) y posteriormente compartirlos ya que son un formato reconocido por R. Primero, vamos a crear algunas variables:
+
+```{r}
+clientes <- c("Juan", "Ricardo", "Pedro")
+fechas <- c("2017-12-3", "2018-10-3", "2015-14-5")
+```
+\
+
+Si guardamos así, el resultado serán años que R interpreta como caracteres (podemos verlo en la pestaña **Global Enviroment**, donde se indica que el tipo es _chr_, es decir, caracteres). Para evitarlo, vamos a guardarlo haciendo uso de la opción **as.Date**. Sin embargo, para usar esta conversión es necesario tener número escritos como fecha en formato anglosajón, es decir, AAAA-MM-DD.
+
+```{r}
+clientes <- c("Juan", "Ricardo", "Pedro")
+fechas <- as.Date(c("2017-12-3", "2018-11-3", "2015-4-15"))
+pago <- c("314", "21.50", "22")
+```
+\
+
+Una vez creadas las variables en las que se guardan las informaciones, podríamos guardarlo en un dataframe que es el objeto básico para análisis de datos en R. Para ello, usamos la función **data.frame (nombre-de-las-variables-que-serán-las-columnas)**. En este caso, las columnas serán las variables _clientes_, _fechas_ y _pago_.
+
+```{r}
+pedidos <- data.frame(clientes, fechas, pago)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

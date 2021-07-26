@@ -1,0 +1,179 @@
+---
+title: "Árboles de clasificación"
+output: html_notebook
+---
+
+En esta clase (62) vamos a usar los paquetes **rpart**, **rpart.plot** y **caret**.
+
+```{r}
+library(rpart)
+library(caret)
+library(rpart.plot)
+```
+\
+
+Como siempre, vamos a cargar y guardar el CSV.
+
+```{r}
+banknote <- read.csv ("/Users/Ariel/Library/Mobile Documents/com~apple~CloudDocs/AADD/DataScience-con-RStudio/Datos/tema3/banknote-authentication.csv")
+```
+\
+
+Como primer caso, vamos a generar los índices, sin volver a guardarlos. Vamos a poner la semilla común "2018".
+
+```{r}
+set.seed (2018)
+training.ids <- createDataPartition(banknote$class, p=0.7, list = F)
+```
+\
+
+Vamos a generar un árbol:
+
+```{r}
+mod <- rpart (class ~., 
+              data = banknote[training.ids,],
+              method = "class",
+              control = rpart.control(minsplit = 20, cp = 0.01))
+```
+
+La explicación es la siguiente:
+* Variable Y en función del resto, en este caso, la variable _class_. Como está en dependencia de todo el resto, usamos el punto ".".
+* Datos, en este caso, solo la partición creada.
+* Método: class, es un arbol que clasifique.
+* Control: parámetros de control en este caso que el árbol solo considere nodos con al menos 20 casos en su interior y que la complejidad se ajuste a 0.01. Son los valores por defecto.
+
+El resultado son nodos que se pueden observar escribiendo el nombre de la variable (**mod**) en la terminal. Cada nodo se nombrará con un número pero es increíblemente complicado de comprender. Será mejor un gráfico:
+
+```{r}
+prp(mod, typ = 2, extra = 104, nn = T,
+    fallen.leaves = T, faclen = 4, varlen = 8, shadow.col = "gray")
+```
+\
+La explicación es la siguiente:
+
+* La función **prp** forma parte del paquete rpart.plot y se encargará de realizar la representación gráfica del árbol.
+* El parámetro **type** indica los tipos de etiquetas que se representará, hay distintas formas.
+* El parámetro **extra** indica la probabilidad del nodo según con respecto al nivel anterior.
+* **nn** sirve para indicar número de nodo (que está indicado justo arriba de cada cuadro).
+* El parámetro **fallen.leaves** sirve para indicar que todas las hojas finales se agrupen al final del gráfico (si no se indica, cada hoja final caerá donde le corresponda y no se alinearán).
+* **faclen** indica el número de caracteres que debería tomar cada factor, en este caso no se aplica ya que los factores no tienen nombre.
+* **varlen** indica el número de caracteres máximo que debería graficarse como nombre de cada variable (en este caso, 8 es el máximo para "variance").
+* Shadow.col, indica el color de la sombra en cada nodo.
+
+\
+
+#### Podar los árboles de clasificación
+\
+
+En la clase anterior, hemos visto que la se generan muchas cajas de clasificación, así que la idea es "podar" el árbol para disminuir la cantidad de información/cajas. El modelo de clasificación realizado, realmente es un modelo de componentes principales, por lo que podemos recortar el número de componentes, utilizando una regla de decisión:
+
+* Accedemos a la tabla de componentes principales, que es el parámetro **cptable** del modelo generado (el modelo **mod** como vemos en la pestaña de **Environment** es una lista de 14 listas, en cuyo interior se encuentra la lista **cptable**).
+* Esta tabla de componentes principales, presenta el componente, el error asociado por validación cruzada (xerror) y la desviación estándar (xstd).
+* Vamos a tomar el mínimo error (es decir, el xerror que está asociado a la última componente) y vamos a sumarlo a la desviación estándar de la componente inmediatamente anterior (xstd).
+* Si esta suma es mayor que el error de la componente (xerror), entonces esta será la última componente que seleccionaremos.
+* En otras palabras, el criterio es **xerror (de la última componente) + xstd (de la componente) > xerror de la componente**
+* A medida que seleccionemos menos componentes, entonces el árbol tendrá menos ramas (aunque irá perdiendo algo de información).
+
+```{r}
+mod$cptable
+```
+\
+
+Podríamos quedarnos ahora con una versión reducida utilizando la función **prune**. Supongamos que podemos recortar dos componentes, hasta la número 4.
+
+```{r}
+mod.pruned <- prune (mod, mod$cptable[2, "CP"])
+prp (mod.pruned, type = 2, extra = 104, nn = T, fallen.leaves = T, faclen = 4, varlen = 8, shadow.col = "gray")
+```
+\
+
+Una vez que hemos generado/recortado el árbol, podríamos hacer una predicción usando el resto de datos (**RECORDEMOS QUE HICIMOS UNA PARTICIÓN DE LOS DATOS PARA OBTENER LOS DATOS PARA GENERAR EL MODELO**) y aplicando el modelo generado/recortado. Finalmente, en una matriz de confusión podríamos ver qué tanto se ajusta el modelo generado/recortado a los datos de prueba.
+
+```{r}
+pred.pruned1 <- predict(mod, banknote[-training.ids,], type = "class") #Genera el modelo usando los -trainings.ids usando una clasificación
+
+confusion.matr1 <- table(banknote[-training.ids,]$class, pred.pruned1, dnn = c("Actual", "Predicho") )
+
+confusion.matr1
+
+```
+\
+
+En el caso de usar el modelo recortado:
+
+```{r}
+pred.pruned2 <- predict(mod.pruned, banknote[-training.ids,], type = "class") #Genera el modelo usando los -trainings.ids
+
+confusion.matr2 <- table(banknote[-training.ids,]$class, pred.pruned2, dnn = c("Actual", "Predicho") )
+
+confusion.matr2
+
+```
+\
+
+No parece haber diferencias entre los dos modelos. Por ello, en lugar de generar un modelo de clasificación basado en una variable dicotómica, podríamos generar un modelo basado en probabilidades de que una observación pertenezca o no a una clase. En este caso, no podríamos generar una matriz de confusión, sino que tendríamos que generar un diagrama ROC para saber cómo se ajusta el modelo al grupo de datos de prueba.
+
+Para generar un modelo basado en probabilidad, solo tenemos que cambiar el tipo: de **class** a **prob**
+
+```{r}
+pred.pruned3 <- predict(mod, banknote[-training.ids,], type = "prob")
+
+head(pred.pruned3)
+
+library(ROCR)
+
+#Haremos una predicción usando la segunda columna, es decir "1", lo que correspondería a "éxito" dentro del objeto pred.pruned3
+
+pred <- prediction(pred.pruned3[,2], banknote[-training.ids, "class"])
+perf <- performance (pred, "tpr", "fpr")
+plot(perf)
+```
+\
+
+Si usamos el modelo sin recortar:
+
+```{r}
+pred.pruned4 <- predict(mod.pruned, banknote[-training.ids,], type = "prob")
+
+head(pred.pruned4)
+
+library(ROCR)
+
+#Haremos una predicción usando la segunda columna, es decir "1", lo que correspondería a "éxito" dentro del objeto pred.pruned3
+
+pred <- prediction(pred.pruned4[,2], banknote[-training.ids, "class"])
+perf <- performance (pred, "tpr", "fpr")
+plot(perf)
+```
+
+\
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

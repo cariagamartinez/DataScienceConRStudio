@@ -1,0 +1,48 @@
+---
+title: "K Nearest Neighbors"
+output: html_notebook
+---
+
+Algoritmo no paramétrico para clasificar o correlacionar. Usaremos dos paquetes: **caret** y **class**. Recordamos que el algoritme KNN (paquete **class**) requiere que las variables independientes/predictoras sean numéricas y la variable a predicir (dependiente) sea un factor/categoría/cualitativa. Por ello, el primer paso es modificar el tipo de variable adecuadamente. 
+Como los datos están dos niveles por encima del WD, colocamos dos veces la sintaxis **../**. Como podemos ver, los datos son de ingresos y número de personas que forman una familia. Como los grandes números siempre enmascaran a los pequeños, vamos a tipificarlos, restándoles su media y dividiéndolos por su desviación estándar, usando la función **scale**, guardando los resultados en una nueva columna llamada **income.z** y **family.z**.
+
+```{r}
+library(class)
+library(caret)
+
+vac <- read.csv("../../Datos/tema3/vacation-trip-classification.csv")
+vac$Income.z <- scale(vac$Income)
+vac$Family_size.z <- scale (vac$Family_size)
+```
+\
+
+Como resultado de las modificaciones anteriores, tenemos dos nuevas columnas tipificadas que son numéricas y vamos a predecir una variable categórica (**Result** que tiene dos niveles: **buyer** y **non-buyer**). Como siempre, haremos una partición de datos, pero en este caso haremos tres grupos:
+* Entrenamiento (50% de los datos)
+* Validación del modelo (25% de los datos)
+* Testeo en otro conjunto de valores (25% de los datos)
+
+Para ello:
+
+```{r}
+set.seed(2018)
+t.ids <- createDataPartition(vac$Result, p = 0.5, list = F) #Creo partición 50-50
+train <- vac[t.ids,] #Guardo 50% en la variable train
+temp <- vac[-t.ids,] #Creo la variable temp donde guardaré el otro 50%
+v.ids <- createDataPartition(temp$Result, p = 0.5, list =F) #Creo una partición donde dividiré otra vez los datos de temp al 50-50
+val <- temp[v.ids,] #Guardo la partición de temp en una variable val
+test <- temp[-v.ids,] # Guardo la partición que sobra en la variable test
+```
+\
+
+Vamos a usar los datos para hacer predicciones, usando la función **knn**. Esta función tiene 3 parámetro:
+* conjunto de datos de entrenamiento
+* conjunto de datos de validación
+* factor "verdadero/real" para realizar la clasificación (del grupo de entrenamiento)
+* k
+
+```{r}
+pred1 <- knn(train[,4:5], val[,4:5], train[,3], k = 5)
+errmat1 <- table(val$Result, pred1, dnn = c("Actual", "Predicho"))
+errmat1
+```
+

@@ -1,0 +1,177 @@
+---
+title: "Representación gráfica"
+output: html_notebook
+---
+\
+
+Vamos a cargar el csv de los coches y a **guardarlo como siempre en una variable**.
+
+```{r}
+auto <-read.csv("/Users/Ariel/Library/Mobile Documents/com~apple~CloudDocs/AADD/DataScience-con-RStudio/Datos/tema2/auto-mpg.csv")
+```
+\
+
+Como primer paso, vamos a generar una variable categórica, a partir de una columna del dataframe inicial:
+
+```{r}
+auto$cylinders <- factor (auto$cylinders,
+                          levels = c(3,4,5,6,8),
+                          labels = c("3cil", "4cil", "5cil", "6cil", "8cil"))
+```
+\
+
+Podríamos "ligar" el dataframe a la sesión actual de R para poder acceder más rápidamente a todos los atributos del dataset. Para ello, usaremos la función **attach**. Esto es muy útil para evitar acceder con la sintaxis del dólar constantemente.
+
+```{r}
+attach(auto)
+```
+\
+
+#### Histograma
+\
+
+Como el dataset (dataframe) está "ligado" a la sesión de R, entonces con la función **hist** de una columna de _auto_ ya podemos generar el histograma. Aunque R genera los datos por defecto, podemos personalizar el gráfico con:
+
+* _col_: color de todo el histograma (entre comillas).
+* _xlab_: etiqueta del eje $X$.
+* _ylab_: etiqueta del eje $Y$.
+* _main_: título principal del gráfico
+* _breaks_: número de divisiones del histograma.
+
+
+```{r}
+hist (acceleration,
+col = "blue",
+xlab = "Aceleración",
+ylab = "Frecuencia",
+main = "Histograma de las aceleraciones",
+breaks = 16)
+```
+\
+
+#### Boxplot
+\
+
+```{r}
+boxplot(mpg, xlab = "Millas por galón")
+```
+\
+```{r}
+boxplot(mpg~model_year, xlab = "Millas por galón por año")
+```
+\
+```{r}
+boxplot(mpg~cylinders, xlab = "Consumo por número de cilindros")
+```
+\
+
+#### Scatterplot
+\
+
+```{r}
+plot(mpg ~ horsepower)
+```
+\
+
+#### Matriz de Scattersplots
+\
+Se utiliza la función **pairs** y la idea es que se cruzan dos a dos todas las variables indicadas.
+
+```{r}
+pairs(~mpg+displacement+horsepower+weight)
+```
+\
+
+### Personalizando aún más los gráficos
+\
+
+Usar la paleta con la función **rainbow**. Para ello, seleccionamos el número de divisiones que queremos (por ejemplo, 12) y en el parámetro color, indicamos la función **rainbow** con el mismo número
+
+```{r}
+hist (acceleration,
+col = rainbow(12),
+xlab = "Aceleración",
+ylab = "Frecuencia",
+main = "Histograma de las aceleraciones",
+breaks = 12)
+```
+\
+
+Como podemos observar, aunque indiquemos más cortes en el histograma (_breaks_), R tiene que seleccionar el número adecuado. Por otra parte, el número de cortes puede afectar la forma general del gráfico por lo que es una buena práctica superponer una línea de densidad relativa sobre el histograma. De esta forma, la línea siempre será la misma y el número de cortes del histograma no afectará tanto la representación de los datos. Para ello, usaremos la función **lines**. 
+**TENEMOS QUE TENER EN CUENTA QUE LA LÍNEA DE DENSIDAD REQUIERE DEL USO DE FRECUENCIAS RELATIVAS PARA QUE SE PUEDA SUPERPONER A UN HISTOGRAMA. EN GENERAL, LOS HISTOGRAMAS USAN FRECUENCIAS ABSOLUTAS, ASÍ QUE TENDREMOS QUE INDICAR EL PARÁMETRO PROB =  T, PARA OBTENER LOS VALORES RELATIVOS**.
+
+```{r}
+hist(mpg, prob = T, col = rainbow(9)) #Indicar prob=T para datos relativos y todos los valores personalizados, como el color
+density(mpg) #obtengo por consola todos los datos
+lines(density(mpg)) #lo pinto y dado que el histograma está en valores relativos, se superpone directamente
+```
+\
+
+En cuanto a los scatterplots, lo mejor es dibujar su recta de regresión lineal, generando un modelo lineal. El modelo lineal se genera con la función **lm**. Luego generamos el scatterplot con **plot** y colocamos la recta de regresión con la función **abline**.
+
+```{r}
+linearmodel <- lm(mpg~horsepower)
+plot(mpg~horsepower)
+abline(linearmodel)
+```
+\
+
+Podríamos pintar con colores según una tercera variable, por ejemplo, la cilindrada, con la función **with**. Mantenemos el modelo lineal y "borramos" todo el plot usando **type = "n"** y comenzamos a dibujar usando subconjuntos.
+
+```{r}
+linearmodel <- lm(mpg~horsepower)
+plot(mpg~horsepower, type = "n")
+abline(linearmodel)
+with(subset(auto, cylinders == "8cil"),
+     points(horsepower, mpg, col = "red"))
+with(subset(auto, cylinders == "6cil"),
+     points(horsepower, mpg, col = "blue"))
+with(subset(auto, cylinders == "4cil"),
+     points(horsepower, mpg, col = "green"))
+```
+\
+
+#### Combinación de plots con par (par=parámetros)
+\
+
+Para conocer los parámetros que podemos modificar en un gráfico, vamos a guardar la información en una variable y luego la leemos para ver qué podemos cambiar.
+
+```{r}
+old.par <- par()
+old.par
+```
+\
+
+Conociendo esos valores, ahora podremos saber qué cambiar. Vemos que la variable _mfrow_ por defecto se encuentra con los valores 1,1, es decir, lo que pintemos se hará en una fila y en una columna. Si queremos cambiarlo, vamos a modificar ese parámetro y a pintar nuevos gráficos.
+
+```{r}
+par(mfrow = c(1,2))
+with(auto, {
+  plot(mpg~ weight, main = "Peso vs Consumo")
+  plot(mpg~acceleration, main = "Aceleración vs Consumo")
+        })
+```
+\
+
+Una vez que modificamos lo que necesitamos, devolvemos las características de **par** a su versión antigua.
+
+```{r}
+par(old.par) #puede que salgan algunos warnings.
+```
+
+\
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

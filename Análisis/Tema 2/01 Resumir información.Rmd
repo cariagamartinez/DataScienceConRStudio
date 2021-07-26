@@ -1,0 +1,160 @@
+---
+title: "Resumir información y obtener estadísticos básicos (Clase 41 y adelante"
+output: html_notebook
+---
+\
+
+#### Resumir información
+\
+
+Una vez que hemos aprendido a cargar datos y a trabajar con valores $NA$ y _outliers_, vamos a pasar al análisis exploratorio de los datos (EDA - _Exploratory Data Analysis_). Como primera acción, vamos a ver las distintas formas de resumir información. Como siempre, guardaremos los datos en una variable, indicaremos que tiene una cabecera y, sobre todo, vamos a indicar que no trate a los _strings_ como factores por si hubiera algún dato $NA$:
+
+```{r}
+data <- read.csv("/Users/Ariel/Library/Mobile Documents/com~apple~CloudDocs/AADD/DataScience-con-RStudio/Datos/tema2/auto-mpg.csv", header = T, stringsAsFactors = F)
+```
+\
+
+Echando un vistazo rápido a la información cargada, vemos que la columna _"cylinders"_ realmente funciona como una variable categórica: los coches pueden tener solamente cierto número de cilindros, identificados por números enteros. Por ello, sería interesante indicar a R que esta columna es un factor. Para ello, usaremos la función **factor**, que consta de los parámetros **level**,es decir, las identificaciones de los niveles y el nombre de cada nivel (**labels**).
+
+```{r Creando factores}
+data$cylinders <- factor(data$cylinders,
+                         levels = c(3,4,5,6,8),
+                         labels = c("3cil", "4cil", "5cil", "6cil", "8cil"))
+```
+\
+
+La forma más sencilla de obtener un resumen es utilizando la función **summary**. Esta función nos devolverá un resumen de los estadísticos más importantes para las variables cuantitativas y diversos conteos en el caso de las variable cualitativas/factores.
+
+```{r}
+summary(data)
+```
+\
+**Desde luego, podríamos acceder a la columna de interés con la sintaxis del dólar (_data$mpg_ nos daría los valores de esa única columna).**
+
+Otra función muy relacionada es **str**, y nos permite conocer la estructura del objeto de R que se ha creado, indicándose el número de observaciones, el tipo de objeto (numérico, caracteres, etc) y las primeras ocurrencias.
+
+```{r}
+str(data)
+```
+\
+
+
+#### Obtener estadísticos básicos
+\
+
+La gran mayoría de los estadísticos básicos pueden ser obtenidos con los paquetes de base de R. Pero en este caso, vamos a instalar 3 paquetes para obtenerlos. Como siempre, cuando querramos instalar varios paquetes a la vez utilizaremos la sintaxis de vector $c$: **install.packages(c("modeest", "raster", "moments"))** y luego los cargamos.
+```{r}
+library(modeest) #moda
+library(raster) #cuantiles y coeficiente de variación
+library(moments) #asimetría y curtosis
+```
+\
+
+Básicamente tenemos estadísticos/medidas de **centralización**, estadísticos/medidas de **dispersión** y estadísticos/medidas de **asimetría**.
+Para trabajar más fácilmente, guardaremos un columna del dataset en una variable que llamaremos _X_ y sobre esta realizaremos todos los cálculos.
+
+```{r}
+X <- data$mpg
+```
+\
+
+Como podemos ver en la pestaña _**Global Environment**_, tenemos un vector numérico llamado X (que es la variable que acabamos de crear), con 398 observaciones, y sobre este trabajaremos.
+\
+\
+
+
+##### Medidas de centralización
+\
+
+```{r Media}
+mean(X)
+sum(X) / length(X)
+```
+\
+
+```{r Mediana}
+median(X)
+```
+\
+
+```{r Moda}
+mfv(X) #Most frequent value del paquete "modeest"
+
+```
+\
+
+```{r}
+quantile(X) #del paquete "raster"
+```
+\
+\
+
+##### Medidas de dispersión
+\
+
+```{r}
+var(X) #Varianza
+sd(X)
+cv(X) #del paquete raster
+```
+\
+\
+
+
+##### Medidas de asimetría
+\
+
+```{r}
+skewness(X) #de la librería "moments" -> Asimetría de Fisher: sale ligeramente positiva, es decir tiene una asimetría positiva (la media está "adelantada" con respecto al pico).
+kurtosis(X) #también de la librería "moments" -> Sale positiva -> Leptocúrtica, es decir, concentra los datos y con poca cola ("puntiaguda"). Platicúrtica sería cuando es aplanada
+```
+\
+
+Realizando un histográma rápido de la variable podríamos ver la distribución de los datos y su simetría.
+
+```{r}
+hist(X)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

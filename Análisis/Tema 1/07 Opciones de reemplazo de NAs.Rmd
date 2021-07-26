@@ -1,0 +1,99 @@
+---
+title: "Opciones de reemplazo de $NAs$"
+output: html_notebook
+---
+
+\
+
+#### Reemplazar los $NA$ con la media o con datos extraídos aleatoriamente
+\
+Como siempre, vamos a cargar el fichero con el que vamos a trabajar y vamos a guardarlo en una variable.
+
+```{r}
+data <- read.csv("/Users/Ariel/Library/Mobile Documents/com~apple~CloudDocs/AADD/DataScience-con-RStudio/Datos/tema1/missing-data.csv", na.strings = "")
+```
+\
+
+#### a) Reemplazar los $NAs$ con la media.
+
+Primero vamos a generar una nueva columna que nos servirá para evaluar inicialmente "el antes y el despúes" de las operaciones que vamos a realizar. En esa nueva columna vamos a reemplazar los valores NAs de la columna _Income_, con la media de _Income_.
+
+Para ello, vamos a usar la función **ifelse**. 
+
+```{r}
+data$Income.mean <- ifelse (is.na(data$Income),
+                            mean(data$Income, na.rm = T),
+                            data$Income
+                            )
+```
+
+\
+La función **ifelse(test, yes, no)** devuevle un valor con la misma forma que el parámetro test, según sea verdadero o falso. En este caso, vemos que "buscamos" todos los valores $NAs$ (con la función **is.na**, dentro de la columna en cuestión) y le decimos que si la condición es verdadera, coloque la media de la columna evitando los $NAs$ (na.rm =T) y que en caso contrario, lo deje como está (es decir, el nombre de la columna). Esta sentencia la guardaremos en una nueva variable/columna ("Income.mean") que se agregará al dataframe "data" (_Income.mean_) donde se habrán reemplazado los valores que tuvieran $NA$ en las filas de la columna Income, por la media aritmética de dicha columna.
+\
+
+Esta opción es posible únicamente cuando tenemos datos numéricos, dónde podamos calcular dicha media. Sin embargo, no es posible cuando tenemos datos categóricos (o bien cuando no queremos realizar dicho reemplazo).
+Por ello, podríamos hacer un muestreo aleatorio y reemplazar a los $NA$ con dicho valor aleatorio: esto también valdría para el caso de variables **cuantitativas**. Para esta situación, haremos uso de algunas funciones:
+
+```{r}
+rand.impute <- function(x) {
+  missing <- is.na(x)
+  n.missing <- sum(missing)
+  x.obs <- x[!missing]
+  imputed <- x
+  imputed[missing] <- sample(x.obs, n.missing, replace = TRUE)
+  return (imputed)
+}
+```
+\
+
+Exploremos la función
+
+1. rand.impute es el nombre de la función. La palabra "impute" se refiere a imputar un valor pero tras pasar algún proceso de cálculo/procesado/comparación (no es una "libre asignación/designación" como sería "decidir" el valor numérico de algo).
+2. _**function (x)**_. Hacemos uso de la palabra reservada _**function**_ e indicamos que, cuando la usemos, tendremos que pasarle un argumento, que en este caso llamamos $x$. El argumento puede ser cualquier vector conteniendo datos y, de hecho, en este caso estamos creando la función para pasarle un dataframe como argumento
+3. x simplemente representa un vector de datos que puede contener NA.
+4. _missing_ es un vector que guardará valores T según existan $NAs$ en el $x$ que le pasamos como argumento (que es el argumento inicial). Así, si hay 2 $NAs$ en el vector $x$, obtendremos 2 TRUE en _missing_ (algo como "TRUE, TRUE"). Este dato no se puede computar así que tenemos que sumarlo y lo hacemos en la siguiente línea,
+5. _n.missing_ es un vector que guardará la suma de los T (ya que la función _**sum**_ de un vector de booleanos suma los valores T) que se ha obtenido al evaluar $x$ por _missing_. Esta suma de T realmente representa todos los valores $NAs$ contenidos en $x$
+6. _x.obs_ es un vector que guardará todas las posiciones que contengan datos conocidos (y que no sean $NAs$) en $x$. Así, esta línea devolverá siempre las observaciones dónde no hay $NA$.
+7. _imputed <- x_: en esta línea indicamos que el valor que se va a devolver por defecto será el mismo. Pero si devolvemos el mismo valor, entonces la función no hace nada...así que le agregamos la otra línea.
+8. _imputed[missing] <- sample(x.obs, n.mssing, replace = TRUE)_ y con esta línea indicamos que en todos las observaciones donde se encuentre un valor _missing_, se reemplace por un valor tomado de una muestra de los valores que sí son conocidos (es decir, _x.obs_), sacando _n.mssing_ valores (si _n.missing_ tiene guardado un valor de 5, pues se sacarán 5 valores) con reemplazo (es decir, que el valor podría volver a sacarse).
+9. _return (imputed)_: devolvemos el resultado.
+\
+
+Una vez que hemos cargado la función anterior, crearemos otra para llame a la función _**rand.impute**_ y nos guarde el resultado en una nueva columna de nuestro dataframe.
+Sería:
+
+```{r}
+random.impute.data.frame <- function(dataframe, cols){
+  names <- names(dataframe)
+  for(col in cols){
+    name <- paste(names[col], "imputed", sep = ".")
+    dataframe[name] = rand.impute(dataframe[,col])
+  }
+  dataframe
+}
+```
+
+Analicemos la función.
+
+1. Como siempre, cada función se crea con la palabra _**function**_ y se le asigna un nombre (random.impute.data.frame, en este caso).
+2. Con la función _names_ accedemos a los nombres de un objeto, en este caso, un dataframe (aquí en particular a las cabeceras de la columnas).
+3. Usamos un bucle _**for**_ que lo que hará es acceder al nombre de cada columna (_col_) de entre todas las columnas indicadas (que es un argumento de la función _cols_) y unirá (_paste_) la palabra "imputed" separada por un punto. Estos cambios se guardarán en una variable llamada _name_.
+4. Posteriormente, accederemos a la columna _name_ del dataframe y guardaremos el resultado de aplicar la función _rand.impute_ en el todas las filas del dataframe y en la columna en cuestión (col).
+\
+
+Veamos cómo utilizarla. Para ello, vamos a indicar el nombre del dataframe al que se aplicará la función (_data_) y las columnas en las que hay dichos $NAs$ a reemplazar. Como son 2 columnas, accederemos a ellas con la sintaxis $c$.
+
+```{r}
+random.impute.data.frame(data, c(1,2)) -> new.data
+```
+\
+
+Otra opción sería también reemplazar los valores "cero" por $NA$ y aplicar los pasos anteriores. Guardaremos los resultados en el dataframe _new.data.2_.
+
+```{r}
+new.data$Income[new.data$Income==0]<- NA
+random.impute.data.frame(new.data, c(1,2)) -> new.data.2
+```
+
+
+

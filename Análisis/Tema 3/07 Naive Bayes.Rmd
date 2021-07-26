@@ -1,0 +1,70 @@
+---
+title: "Naive Bayes"
+output: html_notebook
+---
+
+
+Una de las ventajas es que con pocos datos ya funciona y nos permite una estimación. Supone independencia en las variables para contribuir a la clasificación. 
+Vamos a instalar y usar el paquete **naivebayes** y usaremos dos librerías anexas: **caret** y **e1071**. Como siempre, vamos a guardar el dataset en una variable:
+
+```{r}
+library(caret)
+library(e1071)
+library(naivebayes)
+
+ep <- read.csv("/Users/Ariel/Library/Mobile Documents/com~apple~CloudDocs/AADD/DataScience-con-RStudio/Datos/tema3/electronics-purchase.csv")
+```
+
+\
+
+Como siempre, entrenamos el modelo (colocamos una semilla para replicarlo) con una selección de los datos (2/3 en este caso). Luego generamos un modelo usando NaiveBayes
+
+```{r}
+set.seed(2018)
+training.ids <- createDataPartition(ep$Purchase, p = 0.67, list = F)
+mod <- naiveBayes(Purchase ~., data = ep[training.ids,])
+mod
+```
+
+\
+
+Una vez generado el modelo, vamos a probarlo con los datos de validación, usando la función **predict** y luego haremos matriz de confusión:
+
+```{r}
+pred <- predict(mod, ep[-training.ids,])
+mc <- table(ep[-training.ids,]$Purchase, pred, dnn = c("Actual", "Predicho"))
+confusionMatrix (mc)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

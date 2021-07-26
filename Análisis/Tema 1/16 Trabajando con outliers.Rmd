@@ -1,0 +1,190 @@
+---
+title: "Trabajando con Outliers"
+output: html_notebook
+---
+\
+
+<div style = "text-align : justify"> Los valores extremos, como lo son los _outliers_, tienden a afectar los cálculos realizados en predicciones y por ello es tan importante echar un vistazo al dataset, antes de realizar cálculos predictivos, con el objeto de conocer la presencia de dichos valores _outliers_. En este caso, vamos a trabajar con el documento _ozone_ y **como siempre, vamos a guardar los datos en una variable**.
+
+Usaremos el parámetro _stringAsFactors_ como falso de tal forma que si hay algún dato identificado como $NA$, se reconocerá como un elemento no disponibles (un elemento que R reconoce como no disponible), en lugar de ser reconocido y tratado como si fueran los caracteres "N" y "A" (o bien que el string NA fuera entendido como el nombre de una variable categórica). </div>
+
+
+```{r}
+ozone.data <- read.csv("/Users/Ariel/Library/Mobile Documents/com~apple~CloudDocs/AADD/DataScience-con-RStudio/Datos/tema1/ozone.csv",
+                       stringsAsFactors = F)
+```
+
+\
+
+Vamos a empezar por hacer un boxplot para ver los outliers de la variable _pressure_height_ y usaremos el parámetro **$out** para imprimir los _outliers_ que se guardarán en la variable _outlier.values_ (para ver los valores, usaremos **View**).
+
+En cuanto al gráfico, usaremos el parámetro **main** para indicar el título del plot y con el parámetro **boxwex** podemos indicar la anchura de la caja.
+\
+
+### ¿Qué representa un boxplot?
+\
+
+La línea marcada del centro de la caja es la **mediana** (percentil 50). El límite inferior de la caja es el 1º cuartil (25) y el límite superior indica el 3º cuartil (75). Los bigotes se definen según el rango intercuartílico (es decir, la distancia entre el 3º y el 1º cuartil): los bigotes tienen una longitud equivalente a 1,5 veces el rango intercuartílico, o bien, la observación máxima y mínima si lo primero no se cumple (básicamente lo que suceda antes: mínimos y/o máximos o 1,5 veces de rango intercuartílico). 
+\
+
+
+> **Todos los valores que se salen de estos límites constituyen los outliers.**
+
+
+```{r}
+outlier_values <- boxplot(ozone.data$pressure_height,
+                          main = "Presión",
+                          boxwex = 0.1)$out
+View(outlier_values)
+head(outlier_values, 2) #Vemos los dos primeros valores outliers.
+```
+\
+Podríamos representar el valor de la presión en función de los distintos meses, también utilizando boxplot y analizar la presencia de outliers. En el caso anterior, realizamos el acceso a la variable de interés con la sintaxis de dólar. Pero si queremos acceder a varias variables, es más sencillo colocar el nombre de la variable e indicar el dataframe de interés usando el parámetro **data**. Para ello:
+
+```{r}
+boxplot(pressure_height ~ Month,
+        data = ozone.data,
+        main = "Presión por mes",
+        xlab = "Mes")
+```
+
+\
+
+
+En esta caso, representamos la variable _pressure_height_ en función (~) del mes (__Month__), dentro del dataset _ozone.data_. El título que asignamos al gráfico se indica con el parámetro **main** y las etiquetas de los ejes se indican con **xlab** e **ylab**.
+
+También podríamos usar el parámetro **mtext** para indicar texto fuera del plot. Por ejemplo:
+
+```{r}
+outlier.values.2 <- boxplot(ozone_reading ~ Month,
+                            data = ozone.data,
+                            main = "Lectura de Ozono por mes")
+#mtext ("Valores") #Queda un poco mal así que la línea está comentada. Se puede descomentar para ver el resultado.
+```
+\
+
+
+### IMPUTANDO Y REEMPLAZANDO VALORES OUTLIERS
+
+\
+
+#### Imputando valores (calculando nuevos)
+
+\
+
+Según el tipo de desarrollo que llevemos adelante con el dataset, es posible que necesitemos modificar los datos de tipo _outlier_ con otros valores calculados, como el promedio o la mediana. En este ejemplo, crearemos una función que reemplazará el 5% de datos más extremos (tanto por arriba como por abajo), con la mediana (5% superior) o el promedio (5% inferior). Recordemos, que el 5% se refiere a los percentiles (valores por debajo del percentil 5 y por encima del percentil 95).
+\
+
+```{r}
+impute_outliers <- function(x, removeNA = TRUE){
+  quantiles <- quantile(x, c(0.05, 0.95), na.rm = removeNA)
+  x[x<quantiles[1]] <- mean (x, na.rm = removeNA)
+  x[x>quantiles[2]] <- median (x, na.rm = removeNA)
+  x
+}
+
+imputed_data <- impute_outliers(ozone.data$pressure_height)
+```
+
+\
+
+##### La función explicada:
+
+* Vamos a llamar a la función _impute_outliers_.
+* Usamos la palabra reservada **function** para indicar que estamos creando una función que toma un parámetro $x$ y un valor "removeNA" que, por defecto está a $TRUE$. Este parámetro puede ser variado a $FALSE$ en caso de que el usuario de la función decida que desea tener en cuenta los valores $NA$. El parámetro $x$ es, en principio, una columna donde tendremos valores _outliers_ y además queremos que se tenga en cuenta un parámetro _removeNA_ que se explicará más adelante.
+* Dentro de la variable _quantiles_ vamos a calcular los percentiles, usando la función _quantile_ que tomará el mismo parámetro $x$ inicial y obtendrá la posición 0.05 y 0.95 (es decir, los percentiles 5 y 95). El valor de _na.rm_ se igualará al valor inicialmente aplicado según _removeNA_.
+* Indicaremos que dentro de $x$, y en las posiciones en las que el el cuantil calculado sea menor que el calculado en la posición 1 (es decir, 0,05), se reemplace por la media de $x$ (teniendo el cuenta la decisión con respecto a los $NAs$ según se haya indicado al principio). En el caso de que el cuantil calculado sea mayor que el cuantil en posición 2 (es decir 0,95), se reemplace con la mediana.
+* Devolvemos el valor $x$ modificado tras los cálculos anteriores.
+* Finalmente, aplicamos la función a la columna _pressure_height_ y guardamos sus resultados en la variable _imputed_data_.
+
+\
+
+Una vez creada, compilada y ejecutada la función, tendremos que graficar para ver qué sucede con los cambios aplicados por la función desarrollada. En este caso, nos interesa tener un par de gráficos para ver las diferencias. Los crearemos con la función **par**. Con el parámetro **mfrow** podemos indicar las filas y columnas con la sintaxis de vector (en este caso c(1,2) representa 1 fila y 2 columnas, así que se generarán gráficos uno al lado del otro). Finalmente, graficamos ambos:
+
+
+```{r}
+par(mfrow = c(1,2))
+
+boxplot (ozone.data$pressure_height, main = "Presión con outliers")
+boxplot (imputed_data, main = "Presion sin outliers")
+```
+
+\
+
+#### Reemplanzado valores
+
+\
+
+En el ejemplo anterior realizamos un cálculo (las medias y medianas) e imputamos el valor calculado según la posición de los cuartiles de las observaciones. Otra opción sería directamente reemplazar los valores (sin realizar cálculos: como si se tratara de un $NA$). Para ello, vamos a crear una función que reemplazará los valores más extremos, directamente con los valores de los percentiles. Así, los valores por encima del percentil 95 serán reemplazados con el percentil 95 y los valores que se encuentran por debajo del percentil 5 serán reemplazados por el percentil 5.
+
+```{r}
+replace_outliers <- function(x, removeNA = TRUE) {
+  qrts <- quantile(x, probs = c(0.25, 0.75), na.rm = removeNA)
+  caps <- quantile(x, probs = c(0.05, 0.95), na.rm = removeNA)
+  iqr <- qrts[2]-qrts[1]
+  h <- 1.5*iqr
+  x[x<qrts[1]-h] <- caps[1]
+  x[x>qrts[2]+h] <- caps[2]
+  x
+}
+
+capped_pressure_height <- replace_outliers(ozone.data$pressure_height)
+```
+
+\
+
+##### La función explicada:
+
+* Vamos a llamar a la función _replace_outliers_.
+* Usamos la palabra reservada **function** para indicar que estamos creando una función que toma un parámetro $x$ y un valor "removeNA" que, por defecto está a $TRUE$. Este parámetro puede ser variado a $FALSE$ en caso de que el usuario de la función decida que desea tener en cuenta los valores $NA$. El parámetro $x$ es, en principio, una columna donde tendremos valores _outliers_.
+* Dentro de la variable _qrts_ vamos a guardar los valores de los cuartiles, calculados en $x$ con la función _quantile_. Observemos que hemos indicado con _probs_ la localización (o "probabilidad" del cuartil, es deicr, 0,25 y 0,75 que son el primer y el tercer cuartil).
+* Dentro de la variable _caps_ vamos a guardar los valores que usaremos para "enmascarar" los valores _outliers_. En este caso, serán los percentiles 5 y 95.
+* Calcularemos y guardaremos en la variable _iqr_ el rango intercuartílico, es decir, la diferencia entre el tercer y el primer cuartil que, por otra parte, estaban guardados en las posiciones 1 y 2 de la variable _qrts_.
+* En la variable _h_ guardaremos el "bigote" que corresponde a 1,5 veces el rango intercuartílico.
+* En las dos siguientes sentencias, indicaremos que se reemplace en el $x$ inicial según dos condiciones:
+** En el caso de que $x$ sea menor que el primer cuartil, se reemplaza con el valor guardado en la primera posición de _caps_ (que es el percentil 5).
+** En el caso de que $x$ sea mayor que el valor guardado en la posición 2 de _qrts + h_ con el valor guardado en la segunda posición de _caps_
+* Devolvemos el $x$ modificado.
+* Finalmente, compilamos la función por primera vez y la aplicamos la función a la columna _pressure_height_, guardando los resultados en la variable _capped_pressure_height_ y realizaremos los dos gráficos (con y sin _outliers_).
+
+\
+
+
+```{r}
+par(mfrow = c(1,2))
+
+boxplot (ozone.data$pressure_height, main = "Presión con outliers")
+boxplot (capped_pressure_height, main = "Presion sin outliers")
+```
+\
+\
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

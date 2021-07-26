@@ -1,0 +1,116 @@
+---
+title: "SVM Support Vector Machine"
+output: html_notebook
+---
+
+#### Máquinas de soporte vectorial.
+\
+
+Vamos a utilizar dos paquetes **caret** (para las subdivisiones) y **e1071** (para generar los modelos de SVM).
+Como siempre, como primer paso, **vamos a guardar el dataset en una variable** y vamos a transformar en factor la columna _class_ (que contiene los valores cero y uno, que sirven para asignar las observaciones a una clase).
+\
+Luego haremos una partición del 70% de los datos y crearemos el modelo SVM. En este modelo, lo que necesitamos indicar es la variable que queremos predecir y la variable que utilizaremos para hacerlo (en este caso, se indica **~.** es decir tilde y punto, para indicar que se predice una variable en función del resto de variables). También, el modelo requiere que se indique el dataset original (que en nuestro caso son todas las filas genereadas como índices y todas las columnas).
+
+```{r}
+library (caret)
+library(e1071)
+
+banknote <- read.csv("/Users/Ariel/Library/Mobile Documents/com~apple~CloudDocs/AADD/DataScience-con-RStudio/Datos/tema3/banknote-authentication.csv")
+
+banknote$class <- factor (banknote$class)
+
+set.seed(2018)
+
+training.ids <- createDataPartition(banknote$class, p = 0.7, list = F)
+
+#Para construir el modelo
+
+mod <- svm(class ~., data = banknote[training.ids,])
+```
+\
+
+Para verificar el ajuste del modelo vamos a generar una matriz de confusión. La función **fitted** extrae los valores ajustados para funciones de modelado.
+
+```{r}
+cm <- table(banknote[training.ids, "class"], fitted(mod), dnn = c("Actual", "Predicho"))
+cm
+```
+
+\
+
+Vamos validar ahora el modelo, haciendo una predicción (usando la función **predict**) y usando el conjunto de datos de validación (es decir -training.ids)
+```{r}
+pred <- predict(mod, banknote[-training.ids,])
+```
+\
+
+Vamos a generar una matriz de confusión para ver si la predicción ha sido buena sobre el conjunto de validación:
+
+```{r}
+cm2 <- table(banknote[-training.ids, "class"], pred, dnn = c("Actual", "Predicho"))
+cm2
+```
+
+\
+
+Vamos a hacer un plot para representar algo de información (recordemos que tenemos cuatro variables)
+
+```{r}
+plot (mod, data=banknote[training.ids,], skew~variance)
+```
+\
+
+Veamos ahora cómo lo separa con respecto al conjunto de validación
+
+```{r}
+plot (mod, data=banknote[-training.ids,], skew~variance)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
